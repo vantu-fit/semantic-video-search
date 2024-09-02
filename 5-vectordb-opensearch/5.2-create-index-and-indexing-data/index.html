@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Create Index and Indexing Data With Python SDK">
+    <meta property="og:description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+    <meta property="og:image" content="https://vantu-fit.github.io/semantic-video-search/images/1/logo.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"  content="Create Index and Indexing Data With Python SDK">
+    <meta name="twitter:description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+    <meta name="twitter:image" content="https://vantu-fit.github.io/semantic-video-search/images/1/logo.png">
+    <meta name="twitter:url" content="https://vantu-fit.github.io/semantic-video-search/">
+
+    <meta name="generator" content="Hugo 0.133.0">
+    <meta name="description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+<meta name="author" content="daotq2k@gmail.com">
+
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
+    <title>Create Index and Indexing Data With Python SDK </title>
+
+    
+    <link href="/semantic-video-search/css/nucleus.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/fontawesome-all.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/hybrid.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/featherlight.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/perfect-scrollbar.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/auto-complete.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/atom-one-dark-reasonable.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/theme.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/hugo-theme.css?1725291367" rel="stylesheet">
+    
+    <link href="/semantic-video-search/css/theme-workshop.css?1725291367" rel="stylesheet">
+    
+    
+
+    <script src="/semantic-video-search/js/jquery-3.3.1.min.js?1725291367"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <style>
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+  </head>
+  <body class="" data-url="/semantic-video-search/5-vectordb-opensearch/5.2-create-index-and-indexing-data/">
+    <nav id="sidebar" class="showVisitedLinks">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" href="/">
+
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" width="30%"><defs><style>.cls-1{fill:#fff;}.cls-2{fill:#f90;fill-rule:evenodd;}</style></defs><title>AWS-Logo_White-Color</title><path class="cls-1" d="M14.09,10.85a4.7,4.7,0,0,0,.19,1.48,7.73,7.73,0,0,0,.54,1.19.77.77,0,0,1,.12.38.64.64,0,0,1-.32.49l-1,.7a.83.83,0,0,1-.44.15.69.69,0,0,1-.49-.23,3.8,3.8,0,0,1-.6-.77q-.25-.42-.51-1a6.14,6.14,0,0,1-4.89,2.3,4.54,4.54,0,0,1-3.32-1.19,4.27,4.27,0,0,1-1.22-3.2A4.28,4.28,0,0,1,3.61,7.75,6.06,6.06,0,0,1,7.69,6.46a12.47,12.47,0,0,1,1.76.13q.92.13,1.91.36V5.73a3.65,3.65,0,0,0-.79-2.66A3.81,3.81,0,0,0,7.86,2.3a7.71,7.71,0,0,0-1.79.22,12.78,12.78,0,0,0-1.79.57,4.55,4.55,0,0,1-.58.22l-.26,0q-.35,0-.35-.52V2a1.09,1.09,0,0,1,.12-.58,1.2,1.2,0,0,1,.47-.35A10.88,10.88,0,0,1,5.77.32,10.19,10.19,0,0,1,8.36,0a6,6,0,0,1,4.35,1.35,5.49,5.49,0,0,1,1.38,4.09ZM7.34,13.38a5.36,5.36,0,0,0,1.72-.31A3.63,3.63,0,0,0,10.63,12,2.62,2.62,0,0,0,11.19,11a5.63,5.63,0,0,0,.16-1.44v-.7a14.35,14.35,0,0,0-1.53-.28,12.37,12.37,0,0,0-1.56-.1,3.84,3.84,0,0,0-2.47.67A2.34,2.34,0,0,0,5,11a2.35,2.35,0,0,0,.61,1.76A2.4,2.4,0,0,0,7.34,13.38Zm13.35,1.8a1,1,0,0,1-.64-.16,1.3,1.3,0,0,1-.35-.65L15.81,1.51a3,3,0,0,1-.15-.67.36.36,0,0,1,.41-.41H17.7a1,1,0,0,1,.65.16,1.4,1.4,0,0,1,.33.65l2.79,11,2.59-11A1.17,1.17,0,0,1,24.39.6a1.1,1.1,0,0,1,.67-.16H26.4a1.1,1.1,0,0,1,.67.16,1.17,1.17,0,0,1,.32.65L30,12.39,32.88,1.25A1.39,1.39,0,0,1,33.22.6a1,1,0,0,1,.65-.16h1.54a.36.36,0,0,1,.41.41,1.36,1.36,0,0,1,0,.26,3.64,3.64,0,0,1-.12.41l-4,12.86a1.3,1.3,0,0,1-.35.65,1,1,0,0,1-.64.16H29.25a1,1,0,0,1-.67-.17,1.26,1.26,0,0,1-.32-.67L25.67,3.64,23.11,14.34a1.26,1.26,0,0,1-.32.67,1,1,0,0,1-.67.17Zm21.36.44a11.28,11.28,0,0,1-2.56-.29,7.44,7.44,0,0,1-1.92-.67,1,1,0,0,1-.61-.93v-.84q0-.52.38-.52a.9.9,0,0,1,.31.06l.42.17a8.77,8.77,0,0,0,1.83.58,9.78,9.78,0,0,0,2,.2,4.48,4.48,0,0,0,2.43-.55,1.76,1.76,0,0,0,.86-1.57,1.61,1.61,0,0,0-.45-1.16A4.29,4.29,0,0,0,43,9.22l-2.41-.76A5.15,5.15,0,0,1,38,6.78a3.94,3.94,0,0,1-.83-2.41,3.7,3.7,0,0,1,.45-1.85,4.47,4.47,0,0,1,1.19-1.37A5.27,5.27,0,0,1,40.51.29,7.4,7.4,0,0,1,42.6,0a8.87,8.87,0,0,1,1.12.07q.57.07,1.08.19t.95.26a4.27,4.27,0,0,1,.7.29,1.59,1.59,0,0,1,.49.41.94.94,0,0,1,.15.55v.79q0,.52-.38.52a1.76,1.76,0,0,1-.64-.2,7.74,7.74,0,0,0-3.2-.64,4.37,4.37,0,0,0-2.21.47,1.6,1.6,0,0,0-.79,1.48,1.58,1.58,0,0,0,.49,1.18,4.94,4.94,0,0,0,1.83.92L44.55,7a5.08,5.08,0,0,1,2.57,1.6A3.76,3.76,0,0,1,47.9,11a4.21,4.21,0,0,1-.44,1.93,4.4,4.4,0,0,1-1.21,1.47,5.43,5.43,0,0,1-1.85.93A8.25,8.25,0,0,1,42.05,15.62Z"></path><path class="cls-2" d="M45.19,23.81C39.72,27.85,31.78,30,25,30A36.64,36.64,0,0,1,.22,20.57c-.51-.46-.06-1.09.56-.74A49.78,49.78,0,0,0,25.53,26.4,49.23,49.23,0,0,0,44.4,22.53C45.32,22.14,46.1,23.14,45.19,23.81Z"></path><path class="cls-2" d="M47.47,21.21c-.7-.9-4.63-.42-6.39-.21-.53.06-.62-.4-.14-.74,3.13-2.2,8.27-1.57,8.86-.83s-.16,5.89-3.09,8.35c-.45.38-.88.18-.68-.32C46.69,25.8,48.17,22.11,47.47,21.21Z"></path></svg>
+
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
+</div>
+
+<script type="text/javascript" src="/semantic-video-search/js/lunr.min.js?1725291367"></script>
+<script type="text/javascript" src="/semantic-video-search/js/auto-complete.js?1725291367"></script>
+<script type="text/javascript">
+    
+        var baseurl = "https:\/\/vantu-fit.github.io\/semantic-video-search\/";
+    
+</script>
+<script type="text/javascript" src="/semantic-video-search/js/search.js?1725291367"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/1-introduction/" title="Introduction" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/1-introduction/">
+           <b> 1 </b> Introduction
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/2-settup-s3/" title="Setting Up S3 for Video Storage" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/2-settup-s3/">
+           <b> 2 </b> Setting Up S3 for Video Storage
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/" title="Ingesting Data with ECS Fargate" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/">
+           <b> 3 </b> Ingesting Data with ECS Fargate
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/3.1-create-vpc/" title="Create VPC" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/3.1-create-vpc/">
+           <b> 3.1 </b> Create VPC
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/3.2-erc-repo/" title="Set Up ECR Repository" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/3.2-erc-repo/">
+           <b> 3.2 </b> Set Up ECR Repository
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/3.3-ecs-task/" title="Create ECS Task Definition" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/3.3-ecs-task/">
+           <b> 3.3 </b> Create ECS Task Definition
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/3.4-run-task/" title="Run ECS Task" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/3.4-run-task/">
+           <b> 3.4 </b> Run ECS Task
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/4-process-data/" title="Feature Extraction Using SageMaker and ECS" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/4-process-data/">
+           <b> 4 </b> Feature Extraction Using SageMaker and ECS
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/4-process-data/4.1-extract-keyframes-ecs/" title="Extract Keyframes Using ECS" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/4-process-data/4.1-extract-keyframes-ecs/">
+           <b> 4.1 </b> Extract Keyframes Using ECS
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/4-process-data/4.2-embedding-processing-sagemaker/" title="Embedding Processing with SageMaker" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/4-process-data/4.2-embedding-processing-sagemaker/">
+           <b> 4.2 </b> Embedding Processing with SageMaker
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/5-vectordb-opensearch/" title="Implementing OpenSearch for Vector Database" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/semantic-video-search/5-vectordb-opensearch/">
+           <b> 5 </b> Implementing OpenSearch for Vector Database
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/5-vectordb-opensearch/5.1-set-up-cluster/" title="Set Up OpenSearch Cluster" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/5-vectordb-opensearch/5.1-set-up-cluster/">
+           <b> 5.1 </b> Set Up OpenSearch Cluster
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/5-vectordb-opensearch/5.2-create-index-and-indexing-data/" title="Create Index and Indexing Data With Python SDK" class="dd-item 
+        
+        active
+        
+        ">
+      <a href="/semantic-video-search/5-vectordb-opensearch/5.2-create-index-and-indexing-data/">
+           <b> 5.2 </b> Create Index and Indexing Data With Python SDK
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/5-vectordb-opensearch/5.3-query-by-text/" title="Query by Text" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/5-vectordb-opensearch/5.3-query-by-text/">
+           <b> 5.3 </b> Query by Text
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/" title="Deploy with Terraform" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/">
+           <b> 6 </b> Deploy with Terraform
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.1-settup/" title="Setup" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.1-settup/">
+           <b> 6.1 </b> Setup
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.2-processing-data/" title="Processing Data" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.2-processing-data/">
+           <b> 6.2 </b> Processing Data
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.3-embedding/" title="Embedding" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.3-embedding/">
+           <b> 6.3 </b> Embedding
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.4-vectordb/" title="Vector Database" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.4-vectordb/">
+           <b> 6.4 </b> Vector Database
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.5-cms/" title="CMS" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.5-cms/">
+           <b> 6.5 </b> CMS
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/7-clean-up/" title="Clean Up" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/7-clean-up/">
+           <b> 7 </b> Clean Up
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://aws.amazon.com/blogs"><i class='fab fa-aws'></i> AWS Study Group - Blog</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://www.facebook.com/groups/awsstudygroupfcj"><i class='fab fa-facebook'></i> AWS Study Group - FB Group</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/vantu-fit/"><i class='fab fa-github'></i> GitHub - Đỗ Văn Tư</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://www.linkedin.com/in/vantudo/"><i class='fab fa-linkedin'></i> Linkedin - Đỗ Văn Tư</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="prefooter">
+      <hr/>
+      <ul>
+      
+        <li>
+          <a class="padding">
+            <i class="fas fa-language fa-fw"></i>
+          <div class="select-style">
+            <select id="select-language" onchange="location = this.value;">
+          
+          
+          
+              
+              
+                  
+                    
+                    
+                      <option id="en" value="https://vantu-fit.github.io/semantic-video-search/5-vectordb-opensearch/5.2-create-index-and-indexing-data/" selected>English</option>
+                    
+                  
+              
+                  
+              
+          
+              
+              
+                  
+              
+                  
+                    
+                    
+                      <option id="vi" value="https://vantu-fit.github.io/semantic-video-search/vi/5-vectordb-opensearch/5.2-create-index-and-indexing-data/">Tiếng Việt</option>
+                    
+                  
+              
+          
+        </select>
+        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          width="255px" height="255px" viewBox="0 0 255 255" style="enable-background:new 0 0 255 255;" xml:space="preserve">
+          <g>
+            <g id="arrow-drop-down">
+              <polygon points="0,63.75 127.5,191.25 255,63.75 		" />
+            </g>
+          </g>
+        </svg>
+        </div>
+        </a>
+        </li>
+      
+      
+      
+        <li><a class="padding" href="#" data-clear-history-toggle=""><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+      
+      </ul>
+    </section>
+    
+    <section id="footer">
+      <left>
+    
+     <b> Workshop</b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7920860&style=0038&nbdigits=9&type=page&initCount=0" title="Migrate" Alt="web counter"   border="0" /></a>  <br>
+     <b> <a href="https://cloudjourney.awsstudygroup.com/">Cloud Journey</a></b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7830807&style=0038&nbdigits=9&type=page&initCount=0" title="Total CLoud Journey" Alt="web counter"   border="0"   />
+     
+</left>
+<left>
+    <br>
+    <br>
+        <b> Last Updated </b> <br>
+        <i><font color=orange>26-11-2023</font></i>
+    </left>
+    <left>
+        <br>
+        <br>
+            <b> Team </b> <br>
+            <i> <a href="https://www.linkedin.com/in/jotaguy"  style="color:orange">Gia Hưng </a> <br>
+        </i>
+        </left>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="https://schema.org/Book">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/semantic-video-search/'>Semantic Video Search Vector Database</a> > <a href='/semantic-video-search/5-vectordb-opensearch/'>Implementing OpenSearch for Vector Database</a> > Create Index and Indexing Data With Python SDK
+          
+        
+          
+        
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-prepare-script-to-create-index-and-indexing-data">1 Prepare Script to Create Index and Indexing Data</a></li>
+        <li><a href="#monitoring-the-cluster">Monitoring the Cluster</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+        <div id="head-tags">
+        
+        </div>
+        
+        <div id="body-inner">
+          
+            <h1>
+              
+              Create Index and Indexing Data With Python SDK
+            </h1>
+          
+
+        
+          <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "5-vectordb-opensearch",
+              "name": "Create Index and Indexing Data With Python SDK",
+              "description": "Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.",
+              "url": "https:\/\/vantu-fit.github.io\/semantic-video-search\/5-vectordb-opensearch\/5.2-create-index-and-indexing-data\/",
+              "image": "https:\/\/vantu-fit.github.io\/semantic-video-search\/images\/1\/logo.png",
+              "author": {
+                "@type": "Person",
+                "name": "daotq2k@gmail.com"
+              },
+              "datePublished": "2024-09-02 22:36:07.7349763 \u002b0700 \u002b07 m=\u002b0.726571701",
+              "dateModified": "2024-09-02 22:36:07.7349763 \u002b0700 \u002b07 m=\u002b0.726571701"
+            }
+          </script>
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1014651997538036"
+          crossorigin="anonymous"></script>
+
+
+	<h3 id="1-prepare-script-to-create-index-and-indexing-data">1 Prepare Script to Create Index and Indexing Data</h3>
+<ol>
+<li>Create a Python script to create an index and index data in the OpenSearch domain. The script will perform the following tasks:
+<ul>
+<li>Delete the index if it exists.</li>
+<li>Create an index with KNN settings.</li>
+<li>Create a map embedding from the embeddings directory.</li>
+<li>Bulk add documents to the index from the map embedding jsonl file.</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>Before running the script, make sure to download the embeddings from the s3 bucket to the local machine. The embeddings are stored in the <code>embeddings</code> directory.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>import os
+</span></span><span style="display:flex;"><span>import json
+</span></span><span style="display:flex;"><span>import numpy
+</span></span><span style="display:flex;"><span>from opensearchpy import OpenSearch, helpers , RequestsHttpConnection
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>class SemanticSearch:
+</span></span><span style="display:flex;"><span>    def __init__<span style="color:#f92672">(</span>self, host, port, user, password, index_name<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>        self.client <span style="color:#f92672">=</span> OpenSearch<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>            hosts<span style="color:#f92672">=[{</span><span style="color:#e6db74">&#34;host&#34;</span>: host, <span style="color:#e6db74">&#34;port&#34;</span>: port<span style="color:#f92672">}]</span>,
+</span></span><span style="display:flex;"><span>            http_auth<span style="color:#f92672">=(</span>user, password<span style="color:#f92672">)</span>,
+</span></span><span style="display:flex;"><span>            use_ssl<span style="color:#f92672">=</span>True,
+</span></span><span style="display:flex;"><span>            verify_certs<span style="color:#f92672">=</span>True,
+</span></span><span style="display:flex;"><span>            connection_class<span style="color:#f92672">=</span>RequestsHttpConnection,
+</span></span><span style="display:flex;"><span>            timeout <span style="color:#f92672">=</span> 120,
+</span></span><span style="display:flex;"><span>            max_retries <span style="color:#f92672">=</span> 5,
+</span></span><span style="display:flex;"><span>            retry_on_timeout <span style="color:#f92672">=</span> True
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        self.index_name <span style="color:#f92672">=</span> index_name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    def delete_index<span style="color:#f92672">(</span>self<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>        try:
+</span></span><span style="display:flex;"><span>            response <span style="color:#f92672">=</span> self.client.indices.delete<span style="color:#f92672">(</span>index<span style="color:#f92672">=</span>self.index_name<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            print<span style="color:#f92672">(</span>f<span style="color:#e6db74">&#34;Index &#39;{self.index_name}&#39; deleted successfully:&#34;</span>, response<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        except Exception as e:
+</span></span><span style="display:flex;"><span>            print<span style="color:#f92672">(</span>f<span style="color:#e6db74">&#34;Error deleting index &#39;{self.index_name}&#39;:&#34;</span>, e<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    def create_index<span style="color:#f92672">(</span>self<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>        index_body <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;settings&#34;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;index&#34;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;knn&#34;</span>: True<span style="color:#f92672">}}</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;mappings&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;properties&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;image_embedding&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;knn_vector&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;dimension&#34;</span>: 512,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;method&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;hnsw&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;engine&#34;</span>: <span style="color:#e6db74">&#34;faiss&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;space_type&#34;</span>: <span style="color:#e6db74">&#34;l2&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;parameters&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;ef_construction&#34;</span>: 256,
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;m&#34;</span>: 48,
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;video&#34;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;text&#34;</span><span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;image&#34;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;integer&#34;</span><span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Tạo index</span>
+</span></span><span style="display:flex;"><span>        response <span style="color:#f92672">=</span> self.client.indices.create<span style="color:#f92672">(</span>index<span style="color:#f92672">=</span>self.index_name, body<span style="color:#f92672">=</span>index_body<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        print<span style="color:#f92672">(</span>f<span style="color:#e6db74">&#34;Index created: {response}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    def create_map_embedding<span style="color:#f92672">(</span>self, embedding_dir<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>        files <span style="color:#f92672">=</span> os.listdir<span style="color:#f92672">(</span>embedding_dir<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        map_embedding <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> file in files:
+</span></span><span style="display:flex;"><span>            embeddings <span style="color:#f92672">=</span> numpy.load<span style="color:#f92672">(</span>f<span style="color:#e6db74">&#34;{embedding_dir}/{file}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> i, embedding in enumerate<span style="color:#f92672">(</span>embeddings<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>                map_embedding.append<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;video&#34;</span>: file,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;image&#34;</span>: i + 1,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;image_embedding&#34;</span>: embedding.tolist<span style="color:#f92672">()</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># save to jsonl file</span>
+</span></span><span style="display:flex;"><span>        with open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;map_embedding.jsonl&#34;</span>, <span style="color:#e6db74">&#34;w&#34;</span><span style="color:#f92672">)</span> as f:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> i, doc in enumerate<span style="color:#f92672">(</span>map_embedding<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>                f.write<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>                    json.dumps<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;_op_type&#34;</span>: <span style="color:#e6db74">&#34;index&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;_index&#34;</span>: self.index_name,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;_id&#34;</span>: i + 1,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;_source&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;image_embedding&#34;</span>: doc<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;image_embedding&#34;</span><span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;image&#34;</span>: doc<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;image&#34;</span><span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;video&#34;</span>: doc<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;video&#34;</span><span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                f.write<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;\n&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    def bulk_add_documents<span style="color:#f92672">(</span>self, file_path<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>        actions <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
+</span></span><span style="display:flex;"><span>        with open<span style="color:#f92672">(</span>file_path, <span style="color:#e6db74">&#34;r&#34;</span><span style="color:#f92672">)</span> as f:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> line in f:
+</span></span><span style="display:flex;"><span>                document <span style="color:#f92672">=</span> json.loads<span style="color:#f92672">(</span>line.strip<span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>                actions.append<span style="color:#f92672">(</span>document<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> len<span style="color:#f92672">(</span>actions<span style="color:#f92672">)</span> &gt;<span style="color:#f92672">=</span> 1000:
+</span></span><span style="display:flex;"><span>                    helpers.bulk<span style="color:#f92672">(</span>self.client, actions<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                    print<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Batch added: &#34;</span> , len<span style="color:#f92672">(</span>actions<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                    actions <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> actions:
+</span></span><span style="display:flex;"><span>            helpers.bulk<span style="color:#f92672">(</span>self.client, actions<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Sử dụng class SemanticSearch</span>
+</span></span><span style="display:flex;"><span>host <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&lt;your-opensearch-endpoint&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>port <span style="color:#f92672">=</span> <span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>user <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&lt;your-opensearch-user&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>password <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&lt;your-opensearch-password&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>index_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;semantic-index&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>search_system <span style="color:#f92672">=</span> SemanticSearch<span style="color:#f92672">(</span>host, port, user, password, index_name<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>search_system.delete_index<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>search_system.create_index<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>search_system.create_map_embedding<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;embeddings&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>search_system.bulk_add_documents<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;map_embedding.jsonl&#34;</span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<ol start="2">
+<li>Explain the code:
+<ul>
+<li><strong>delete_index()</strong> : Xóa index nếu tồn tại.</li>
+<li><strong>create_index()</strong> : Tạo index với cấu hình KNN (dimension = <code>512</code>, method = <code>hnsw</code>, engine = <code>faiss</code>, space_type = <code>l2</code>).</li>
+<li><strong>create_map_embedding()</strong> : Tạo map embedding từ các file embedding trong thư mục <code>embeddings</code> theo định dạng jsonl.</li>
+<li><strong>bulk_add_documents()</strong> : Thêm các documents vào index từ file jsonl theo batch size <code>1000</code>.</li>
+</ul>
+</li>
+</ol>
+<h3 id="monitoring-the-cluster">Monitoring the Cluster</h3>
+<h4 id="1-check-cluster-health">1. Check Cluster Health</h4>
+<ol>
+<li>Navigate to <strong>OpenSearch</strong> by clicking on the <strong>Domain</strong> menu, click on the domain name <code>semantic-search-domain</code>.</li>
+<li>In the <strong>Overview</strong> tab, you can see the <strong>Cluster health</strong> status.
+<img alt="Cluster Health" src="../img/cluster-health.png"></li>
+</ol>
+<ul>
+<li>After indexing the data, we will see total dcouments is <code>105k</code>
+<img alt="Cluster Health" src="../img/cluster-health-2.png"></li>
+</ul>
+
+
+
+
+
+<footer class=" footline" >
+	
+</footer>
+
+        
+        </div>
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+
+        
+
+
+	 
+	 
+		
+			<a class="nav nav-prev" href="/semantic-video-search/5-vectordb-opensearch/5.1-set-up-cluster/" title="Set Up OpenSearch Cluster"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/semantic-video-search/5-vectordb-opensearch/5.3-query-by-text/" title="Query by Text" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
+    </div>
+
+    </section>
+
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/semantic-video-search/js/clipboard.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/perfect-scrollbar.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/perfect-scrollbar.jquery.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/jquery.sticky.js?1725291367"></script>
+    <script src="/semantic-video-search/js/featherlight.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/highlight.pack.js?1725291367"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/semantic-video-search/js/modernizr.custom-3.6.0.js?1725291367"></script>
+    <script src="/semantic-video-search/js/learn.js?1725291367"></script>
+    <script src="/semantic-video-search/js/hugo-learn.js?1725291367"></script>
+
+    <link href="/semantic-video-search/mermaid/mermaid.css?1725291367" rel="stylesheet" />
+    <script src="/semantic-video-search/mermaid/mermaid.js?1725291367"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-158079754-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+        <script type="module">
+          
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+          import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+          
+          
+
+          
+          
+          const firebaseConfig = {
+            apiKey: "AIzaSyBk4I0jICesRliX2d-MkhqQrrxkaq1bqZM",
+            authDomain: "aws-hands-on-da9b8.firebaseapp.com",
+            projectId: "aws-hands-on-da9b8",
+            storageBucket: "aws-hands-on-da9b8.appspot.com",
+            messagingSenderId: "99697369891",
+            appId: "1:99697369891:web:5c0dc4e7dbf53534a5e296",
+            measurementId: "G-74VPJT2D9C"
+          };
+
+          
+          const app = initializeApp(firebaseConfig);
+          const analytics = getAnalytics(app);
+        </script>
+  </body>
+</html>

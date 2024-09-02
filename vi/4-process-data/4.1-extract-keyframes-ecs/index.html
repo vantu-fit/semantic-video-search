@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="vi" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Extract Keyframes Using ECS">
+    <meta property="og:description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+    <meta property="og:image" content="https://vantu-fit.github.io/semantic-video-search/images/1/logo.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"  content="Extract Keyframes Using ECS">
+    <meta name="twitter:description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+    <meta name="twitter:image" content="https://vantu-fit.github.io/semantic-video-search/images/1/logo.png">
+    <meta name="twitter:url" content="https://vantu-fit.github.io/semantic-video-search/">
+
+    <meta name="generator" content="Hugo 0.133.0">
+    <meta name="description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+<meta name="author" content="daotq2k@gmail.com">
+
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
+    <title>Extract Keyframes Using ECS </title>
+
+    
+    <link href="/semantic-video-search/css/nucleus.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/fontawesome-all.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/hybrid.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/featherlight.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/perfect-scrollbar.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/auto-complete.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/atom-one-dark-reasonable.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/theme.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/hugo-theme.css?1725291367" rel="stylesheet">
+    
+    <link href="/semantic-video-search/css/theme-workshop.css?1725291367" rel="stylesheet">
+    
+    
+
+    <script src="/semantic-video-search/js/jquery-3.3.1.min.js?1725291367"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <style>
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+  </head>
+  <body class="" data-url="/semantic-video-search/vi/4-process-data/4.1-extract-keyframes-ecs/">
+    <nav id="sidebar" class="showVisitedLinks">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" href="/">
+
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" width="30%"><defs><style>.cls-1{fill:#fff;}.cls-2{fill:#f90;fill-rule:evenodd;}</style></defs><title>AWS-Logo_White-Color</title><path class="cls-1" d="M14.09,10.85a4.7,4.7,0,0,0,.19,1.48,7.73,7.73,0,0,0,.54,1.19.77.77,0,0,1,.12.38.64.64,0,0,1-.32.49l-1,.7a.83.83,0,0,1-.44.15.69.69,0,0,1-.49-.23,3.8,3.8,0,0,1-.6-.77q-.25-.42-.51-1a6.14,6.14,0,0,1-4.89,2.3,4.54,4.54,0,0,1-3.32-1.19,4.27,4.27,0,0,1-1.22-3.2A4.28,4.28,0,0,1,3.61,7.75,6.06,6.06,0,0,1,7.69,6.46a12.47,12.47,0,0,1,1.76.13q.92.13,1.91.36V5.73a3.65,3.65,0,0,0-.79-2.66A3.81,3.81,0,0,0,7.86,2.3a7.71,7.71,0,0,0-1.79.22,12.78,12.78,0,0,0-1.79.57,4.55,4.55,0,0,1-.58.22l-.26,0q-.35,0-.35-.52V2a1.09,1.09,0,0,1,.12-.58,1.2,1.2,0,0,1,.47-.35A10.88,10.88,0,0,1,5.77.32,10.19,10.19,0,0,1,8.36,0a6,6,0,0,1,4.35,1.35,5.49,5.49,0,0,1,1.38,4.09ZM7.34,13.38a5.36,5.36,0,0,0,1.72-.31A3.63,3.63,0,0,0,10.63,12,2.62,2.62,0,0,0,11.19,11a5.63,5.63,0,0,0,.16-1.44v-.7a14.35,14.35,0,0,0-1.53-.28,12.37,12.37,0,0,0-1.56-.1,3.84,3.84,0,0,0-2.47.67A2.34,2.34,0,0,0,5,11a2.35,2.35,0,0,0,.61,1.76A2.4,2.4,0,0,0,7.34,13.38Zm13.35,1.8a1,1,0,0,1-.64-.16,1.3,1.3,0,0,1-.35-.65L15.81,1.51a3,3,0,0,1-.15-.67.36.36,0,0,1,.41-.41H17.7a1,1,0,0,1,.65.16,1.4,1.4,0,0,1,.33.65l2.79,11,2.59-11A1.17,1.17,0,0,1,24.39.6a1.1,1.1,0,0,1,.67-.16H26.4a1.1,1.1,0,0,1,.67.16,1.17,1.17,0,0,1,.32.65L30,12.39,32.88,1.25A1.39,1.39,0,0,1,33.22.6a1,1,0,0,1,.65-.16h1.54a.36.36,0,0,1,.41.41,1.36,1.36,0,0,1,0,.26,3.64,3.64,0,0,1-.12.41l-4,12.86a1.3,1.3,0,0,1-.35.65,1,1,0,0,1-.64.16H29.25a1,1,0,0,1-.67-.17,1.26,1.26,0,0,1-.32-.67L25.67,3.64,23.11,14.34a1.26,1.26,0,0,1-.32.67,1,1,0,0,1-.67.17Zm21.36.44a11.28,11.28,0,0,1-2.56-.29,7.44,7.44,0,0,1-1.92-.67,1,1,0,0,1-.61-.93v-.84q0-.52.38-.52a.9.9,0,0,1,.31.06l.42.17a8.77,8.77,0,0,0,1.83.58,9.78,9.78,0,0,0,2,.2,4.48,4.48,0,0,0,2.43-.55,1.76,1.76,0,0,0,.86-1.57,1.61,1.61,0,0,0-.45-1.16A4.29,4.29,0,0,0,43,9.22l-2.41-.76A5.15,5.15,0,0,1,38,6.78a3.94,3.94,0,0,1-.83-2.41,3.7,3.7,0,0,1,.45-1.85,4.47,4.47,0,0,1,1.19-1.37A5.27,5.27,0,0,1,40.51.29,7.4,7.4,0,0,1,42.6,0a8.87,8.87,0,0,1,1.12.07q.57.07,1.08.19t.95.26a4.27,4.27,0,0,1,.7.29,1.59,1.59,0,0,1,.49.41.94.94,0,0,1,.15.55v.79q0,.52-.38.52a1.76,1.76,0,0,1-.64-.2,7.74,7.74,0,0,0-3.2-.64,4.37,4.37,0,0,0-2.21.47,1.6,1.6,0,0,0-.79,1.48,1.58,1.58,0,0,0,.49,1.18,4.94,4.94,0,0,0,1.83.92L44.55,7a5.08,5.08,0,0,1,2.57,1.6A3.76,3.76,0,0,1,47.9,11a4.21,4.21,0,0,1-.44,1.93,4.4,4.4,0,0,1-1.21,1.47,5.43,5.43,0,0,1-1.85.93A8.25,8.25,0,0,1,42.05,15.62Z"></path><path class="cls-2" d="M45.19,23.81C39.72,27.85,31.78,30,25,30A36.64,36.64,0,0,1,.22,20.57c-.51-.46-.06-1.09.56-.74A49.78,49.78,0,0,0,25.53,26.4,49.23,49.23,0,0,0,44.4,22.53C45.32,22.14,46.1,23.14,45.19,23.81Z"></path><path class="cls-2" d="M47.47,21.21c-.7-.9-4.63-.42-6.39-.21-.53.06-.62-.4-.14-.74,3.13-2.2,8.27-1.57,8.86-.83s-.16,5.89-3.09,8.35c-.45.38-.88.18-.68-.32C46.69,25.8,48.17,22.11,47.47,21.21Z"></path></svg>
+
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
+</div>
+
+<script type="text/javascript" src="/semantic-video-search/js/lunr.min.js?1725291367"></script>
+<script type="text/javascript" src="/semantic-video-search/js/auto-complete.js?1725291367"></script>
+<script type="text/javascript">
+    
+        var baseurl = "https:\/\/vantu-fit.github.io\/semantic-video-search\/\/vi";
+    
+</script>
+<script type="text/javascript" src="/semantic-video-search/js/search.js?1725291367"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/1-introduction/" title="Workshop Hệ Thống Cơ Sở Dữ Liệu Tìm Kiếm Video Ngữ Nghĩa" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/1-introduction/">
+           <b> 1 </b> Workshop Hệ Thống Cơ Sở Dữ Liệu Tìm Kiếm Video Ngữ Nghĩa
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/2-settup-s3/" title="Setting Up S3 for Video Storage" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/2-settup-s3/">
+           <b> 2 </b> Setting Up S3 for Video Storage
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/3-ingrest-data/" title="Ingesting Data with ECS Fargate" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/3-ingrest-data/">
+           <b> 3 </b> Ingesting Data with ECS Fargate
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/3-ingrest-data/3.1-create-vpc/" title="Create VPC" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/3-ingrest-data/3.1-create-vpc/">
+           <b> 3.1 </b> Create VPC
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/3-ingrest-data/3.2-erc-repo/" title="Set Up ECR Repository" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/3-ingrest-data/3.2-erc-repo/">
+           <b> 3.2 </b> Set Up ECR Repository
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/3-ingrest-data/3.3-ecs-task/" title="Create ECS Task Definition" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/3-ingrest-data/3.3-ecs-task/">
+           <b> 3.3 </b> Create ECS Task Definition
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/3-ingrest-data/3.4-run-task/" title="Run ECS Task" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/3-ingrest-data/3.4-run-task/">
+           <b> 3.4 </b> Run ECS Task
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/4-process-data/" title="Feature Extraction Using SageMaker and ECS" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/4-process-data/">
+           <b> 4 </b> Feature Extraction Using SageMaker and ECS
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/4-process-data/4.1-extract-keyframes-ecs/" title="Extract Keyframes Using ECS" class="dd-item 
+        
+        active
+        
+        ">
+      <a href="/semantic-video-search/vi/4-process-data/4.1-extract-keyframes-ecs/">
+           <b> 4.1 </b> Extract Keyframes Using ECS
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/4-process-data/4.2-embedding-processing-sagemaker/" title="Embedding Processing with SageMaker" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/4-process-data/4.2-embedding-processing-sagemaker/">
+           <b> 4.2 </b> Embedding Processing with SageMaker
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/5-vectordb-opensearch/" title="Implementing OpenSearch for Vector Database" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/5-vectordb-opensearch/">
+           <b> 5 </b> Implementing OpenSearch for Vector Database
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/5-vectordb-opensearch/5.1-set-up-cluster/" title="Set Up OpenSearch Cluster" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/5-vectordb-opensearch/5.1-set-up-cluster/">
+           <b> 5.1 </b> Set Up OpenSearch Cluster
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/5-vectordb-opensearch/5.2-create-index-and-indexing-data/" title="Create Index and Indexing Data With Python SDK" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/5-vectordb-opensearch/5.2-create-index-and-indexing-data/">
+           <b> 5.2 </b> Create Index and Indexing Data With Python SDK
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/vi/5-vectordb-opensearch/5.3-query-by-text/" title="Query by Text" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/vi/5-vectordb-opensearch/5.3-query-by-text/">
+           <b> 5.3 </b> Query by Text
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="http://awsstudygroup.com"><i class='fab fa-aws'></i> AWS Study Group - Blog</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://www.facebook.com/groups/awsstudygroupfcj"><i class='fab fa-facebook'></i> AWS Study Group - Nhóm FB</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/vantu-fit/"><i class='fab fa-github'></i> GitHub - Đỗ Văn Tư</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://www.linkedin.com/in/vantudo/"><i class='fab fa-linkedin'></i> Linkedin - Đỗ Văn Tư</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="prefooter">
+      <hr/>
+      <ul>
+      
+        <li>
+          <a class="padding">
+            <i class="fas fa-language fa-fw"></i>
+          <div class="select-style">
+            <select id="select-language" onchange="location = this.value;">
+          
+          
+          
+              
+              
+                  
+                    
+                    
+                      <option id="en" value="https://vantu-fit.github.io/semantic-video-search/4-process-data/4.1-extract-keyframes-ecs/">English</option>
+                    
+                  
+              
+                  
+              
+          
+              
+              
+                  
+              
+                  
+                    
+                    
+                      <option id="vi" value="https://vantu-fit.github.io/semantic-video-search/vi/4-process-data/4.1-extract-keyframes-ecs/" selected>Tiếng Việt</option>
+                    
+                  
+              
+          
+        </select>
+        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          width="255px" height="255px" viewBox="0 0 255 255" style="enable-background:new 0 0 255 255;" xml:space="preserve">
+          <g>
+            <g id="arrow-drop-down">
+              <polygon points="0,63.75 127.5,191.25 255,63.75 		" />
+            </g>
+          </g>
+        </svg>
+        </div>
+        </a>
+        </li>
+      
+      
+      
+        <li><a class="padding" href="#" data-clear-history-toggle=""><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+      
+      </ul>
+    </section>
+    
+    <section id="footer">
+      <left>
+    
+     <b> Workshop</b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7920860&style=0038&nbdigits=9&type=page&initCount=0" title="Migrate" Alt="web counter"   border="0" /></a>  <br>
+     <b> <a href="https://cloudjourney.awsstudygroup.com/">Cloud Journey</a></b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7830807&style=0038&nbdigits=9&type=page&initCount=0" title="Total CLoud Journey" Alt="web counter"   border="0"   />
+     
+</left>
+<left>
+    <br>
+    <br>
+        <b> Last Updated </b> <br>
+        <i><font color=orange>26-11-2023</font></i>
+    </left>
+    <left>
+        <br>
+        <br>
+            <b> Team </b> <br>
+            <i> <a href="https://www.linkedin.com/in/jotaguy"  style="color:orange">Gia Hưng </a> <br>
+        </i>
+        </left>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="https://schema.org/Book">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/semantic-video-search/vi/'>Giới thiệu chuỗi 100 ngày AWS Hand On Labs</a> > <a href='/semantic-video-search/vi/4-process-data/'>Feature Extraction Using SageMaker and ECS</a> > Extract Keyframes Using ECS
+          
+        
+          
+        
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-create-docker-image-for-keyframes-extraction">1 Create Docker Image for Keyframes Extraction</a></li>
+        <li><a href="#create-task-definition">Create Task Definition</a></li>
+        <li><a href="#3-run-task-to-extract-keyframes">3 Run Task to Extract Keyframes</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+        <div id="head-tags">
+        
+        </div>
+        
+        <div id="body-inner">
+          
+            <h1>
+              
+              Extract Keyframes Using ECS
+            </h1>
+          
+
+        
+          <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "4-process-data",
+              "name": "Extract Keyframes Using ECS",
+              "description": "Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.",
+              "url": "https:\/\/vantu-fit.github.io\/semantic-video-search\/vi\/4-process-data\/4.1-extract-keyframes-ecs\/",
+              "image": "https:\/\/vantu-fit.github.io\/semantic-video-search\/images\/1\/logo.png",
+              "author": {
+                "@type": "Person",
+                "name": "daotq2k@gmail.com"
+              },
+              "datePublished": "2024-09-02 22:36:07.82381 \u002b0700 \u002b07 m=\u002b0.815405401",
+              "dateModified": "2024-09-02 22:36:07.82381 \u002b0700 \u002b07 m=\u002b0.815405401"
+            }
+          </script>
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1014651997538036"
+          crossorigin="anonymous"></script>
+
+
+	<h3 id="1-create-docker-image-for-keyframes-extraction">1 Create Docker Image for Keyframes Extraction</h3>
+<ol>
+<li>Create a new directory called <code>ecr-extract-keyframes</code> and navigate to it.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>|-- Dockerfile
+</span></span><span style="display:flex;"><span>|-- get-object-s3.py
+</span></span><span style="display:flex;"><span>|-- requirements.txt
+</span></span><span style="display:flex;"><span>|-- run-task.py
+</span></span><span style="display:flex;"><span>|-- split-video.py
+</span></span></code></pre></div><ol start="2">
+<li>Create file <code>Dockerfile</code> in the directory.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Dockerfile" data-lang="Dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> python:3.9-slim</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apt-get update <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    apt-get install -y <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    libgl1-mesa-glx <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    libglib2.0-0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#f92672">&amp;&amp;</span> rm -rf /var/lib/apt/lists/*<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> requirements.txt .<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> pip install --no-cache-dir -r requirements.txt<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> . /app<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /app</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;python&#34;</span>, <span style="color:#e6db74">&#34;extract-keyframes.py&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><ol start="3">
+<li>Create file <code>extract-keyframes.py</code> in the directory.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> boto3
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> cv2
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> tempfile
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> csv
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> io <span style="color:#f92672">import</span> StringIO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">S3KeyframeUpdater</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, bucket_name, video_key, folder_prefix, output_csv_key):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>bucket_name <span style="color:#f92672">=</span> bucket_name
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>video_key <span style="color:#f92672">=</span> video_key
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>folder_prefix <span style="color:#f92672">=</span> folder_prefix
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>output_csv_key <span style="color:#f92672">=</span> output_csv_key
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>s3 <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#39;s3&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">list_s3_objects</span>(self, prefix):
+</span></span><span style="display:flex;"><span>        response <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>s3<span style="color:#f92672">.</span>list_objects_v2(Bucket<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>bucket_name, Prefix<span style="color:#f92672">=</span>prefix)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#39;Contents&#39;</span> <span style="color:#f92672">in</span> response:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> [obj[<span style="color:#e6db74">&#39;Key&#39;</span>] <span style="color:#66d9ef">for</span> obj <span style="color:#f92672">in</span> response[<span style="color:#e6db74">&#39;Contents&#39;</span>]]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_s3_object</span>(self, key):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>s3<span style="color:#f92672">.</span>get_object(Bucket<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>bucket_name, Key<span style="color:#f92672">=</span>key)[<span style="color:#e6db74">&#39;Body&#39;</span>]<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">update_keyframe_metadata</span>(self):
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Download video from </span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>video_key<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>        video_data <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>get_s3_object(self<span style="color:#f92672">.</span>video_key)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">with</span> tempfile<span style="color:#f92672">.</span>NamedTemporaryFile(delete<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, suffix<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;.mp4&#39;</span>) <span style="color:#66d9ef">as</span> temp_video_file:
+</span></span><span style="display:flex;"><span>            temp_video_file<span style="color:#f92672">.</span>write(video_data)
+</span></span><span style="display:flex;"><span>            temp_video_path <span style="color:#f92672">=</span> temp_video_file<span style="color:#f92672">.</span>name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        video <span style="color:#f92672">=</span> cv2<span style="color:#f92672">.</span>VideoCapture(temp_video_path)
+</span></span><span style="display:flex;"><span>        keyframe_keys <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>list_s3_objects(self<span style="color:#f92672">.</span>folder_prefix)
+</span></span><span style="display:flex;"><span>        number_of_keyframes <span style="color:#f92672">=</span> len(keyframe_keys)
+</span></span><span style="display:flex;"><span>        count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        frame_number <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        csv_buffer <span style="color:#f92672">=</span> StringIO()
+</span></span><span style="display:flex;"><span>        csv_writer <span style="color:#f92672">=</span> csv<span style="color:#f92672">.</span>writer(csv_buffer)
+</span></span><span style="display:flex;"><span>        csv_writer<span style="color:#f92672">.</span>writerow([<span style="color:#e6db74">&#39;VideoName&#39;</span>, <span style="color:#e6db74">&#39;KeyframeName&#39;</span>, <span style="color:#e6db74">&#39;FrameNumber&#39;</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> <span style="color:#66d9ef">True</span>:
+</span></span><span style="display:flex;"><span>            ret, frame <span style="color:#f92672">=</span> video<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> ret <span style="color:#f92672">or</span> count <span style="color:#f92672">&gt;=</span> number_of_keyframes:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            gray_frame <span style="color:#f92672">=</span> cv2<span style="color:#f92672">.</span>cvtColor(frame, cv2<span style="color:#f92672">.</span>COLOR_BGR2GRAY)
+</span></span><span style="display:flex;"><span>            keyframe_data <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>get_s3_object(keyframe_keys[count])
+</span></span><span style="display:flex;"><span>            keyframe_img <span style="color:#f92672">=</span> cv2<span style="color:#f92672">.</span>imdecode(np<span style="color:#f92672">.</span>frombuffer(keyframe_data, np<span style="color:#f92672">.</span>uint8), cv2<span style="color:#f92672">.</span>IMREAD_GRAYSCALE)
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            result <span style="color:#f92672">=</span> cv2<span style="color:#f92672">.</span>matchTemplate(gray_frame, keyframe_img, cv2<span style="color:#f92672">.</span>TM_CCOEFF_NORMED)
+</span></span><span style="display:flex;"><span>            _, max_val, _, _ <span style="color:#f92672">=</span> cv2<span style="color:#f92672">.</span>minMaxLoc(result)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> max_val <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.9</span>:
+</span></span><span style="display:flex;"><span>                name <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>basename(keyframe_keys[count])
+</span></span><span style="display:flex;"><span>                self<span style="color:#f92672">.</span>s3<span style="color:#f92672">.</span>copy_object(
+</span></span><span style="display:flex;"><span>                    Bucket<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>bucket_name,
+</span></span><span style="display:flex;"><span>                    CopySource<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#39;Bucket&#39;</span>: self<span style="color:#f92672">.</span>bucket_name, <span style="color:#e6db74">&#39;Key&#39;</span>: keyframe_keys[count]},
+</span></span><span style="display:flex;"><span>                    Key<span style="color:#f92672">=</span>keyframe_keys[count],
+</span></span><span style="display:flex;"><span>                    MetadataDirective<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;REPLACE&#39;</span>,
+</span></span><span style="display:flex;"><span>                    Metadata<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#39;VideoKey&#39;</span>: self<span style="color:#f92672">.</span>video_key,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#39;FrameNumber&#39;</span>: str(frame_number)
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                )
+</span></span><span style="display:flex;"><span>                print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Updated metadata for </span><span style="color:#e6db74">{</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74"> at frame </span><span style="color:#e6db74">{</span>frame_number<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>                csv_writer<span style="color:#f92672">.</span>writerow([os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>basename(self<span style="color:#f92672">.</span>video_key), name, frame_number])
+</span></span><span style="display:flex;"><span>                count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            frame_number <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        video<span style="color:#f92672">.</span>release()
+</span></span><span style="display:flex;"><span>        os<span style="color:#f92672">.</span>remove(temp_video_path)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        csv_buffer<span style="color:#f92672">.</span>seek(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>s3<span style="color:#f92672">.</span>put_object(
+</span></span><span style="display:flex;"><span>            Bucket<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>bucket_name,
+</span></span><span style="display:flex;"><span>            Key<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>output_csv_key,
+</span></span><span style="display:flex;"><span>            Body<span style="color:#f92672">=</span>csv_buffer<span style="color:#f92672">.</span>getvalue(),
+</span></span><span style="display:flex;"><span>            ContentType<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;text/csv&#39;</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Result has saved to </span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>output_csv_key<span style="color:#e6db74">}</span><span style="color:#e6db74"> on S3&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    bucket_name <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#39;BUCKET_NAME&#39;</span>]
+</span></span><span style="display:flex;"><span>    folder_prefix <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#39;FOLDER_PREFIX&#39;</span>]
+</span></span><span style="display:flex;"><span>    video_key <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#39;VIDEO_KEY&#39;</span>]
+</span></span><span style="display:flex;"><span>    output_csv_key <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;metadata/</span><span style="color:#e6db74">{</span>video_key<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;/&#34;</span>)[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;.&#34;</span>)[<span style="color:#ae81ff">0</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">.csv&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> bucket_name <span style="color:#f92672">or</span> <span style="color:#f92672">not</span> folder_prefix <span style="color:#f92672">or</span> <span style="color:#f92672">not</span> video_key:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>(<span style="color:#e6db74">&#39;Missing environment variables&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Start updating keyframe metadata: &#34;</span>, bucket_name, video_key, folder_prefix, output_csv_key)
+</span></span><span style="display:flex;"><span>    updater <span style="color:#f92672">=</span> S3KeyframeUpdater(bucket_name, video_key, folder_prefix, output_csv_key)
+</span></span><span style="display:flex;"><span>    updater<span style="color:#f92672">.</span>update_keyframe_metadata()
+</span></span></code></pre></div><ol start="4">
+<li>Create a <code>requirements.txt</code> in the directory.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>boto3
+</span></span><span style="display:flex;"><span>opencv-python-headless
+</span></span><span style="display:flex;"><span>numpy
+</span></span></code></pre></div><ol start="5">
+<li>Build the docker image.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker build -t ai-challenge-2024:keyframe-matcher .
+</span></span></code></pre></div><ol start="6">
+<li>Tag the docker image.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker tag ai-challenge-2024:keyframe-matcher &lt;aws account_id&gt;.dkr.ecr.ap-southeast-1.amazonaws.com/ai-challenge-2024:keyframe-matcher
+</span></span></code></pre></div><ol start="8">
+<li>Push the docker image to ECR.
+<!-- raw HTML omitted -->
+<ul>
+<li>Go to the ECR console. Click on the repository <code>ai-challenge-2024</code>. Click on the <code>View push commands</code> button.</li>
+<li>Run the commands to login to ECR.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin &lt;aws account_id&gt;.dkr.ecr.ap-southeast-1.amazonaws.com
+</span></span></code></pre></div><ul>
+<li>Push the docker image to ECR.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker push &lt;aws account_id&gt;.dkr.ecr.ap-southeast-1.amazonaws.com/ai-challenge-2024:keyframe-matcher
+</span></span></code></pre></div></li>
+</ol>
+<p><img alt="Docs Version Dropdown" src="../img/ecs-task.png"></p>
+<h3 id="create-task-definition">Create Task Definition</h3>
+<ol>
+<li>Click on <strong>Task Definitions</strong> in the left navigation pane.</li>
+<li>Click on <strong>Create new Task Definition</strong> button.
+<ul>
+<li>Select <strong>Create new task with JSON</strong></li>
+</ul>
+</li>
+<li>Paste this json in the <strong>Task Definition</strong> editor.</li>
+</ol>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;containerDefinitions&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;keyframe-matcher-container-min&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;image&#34;</span>: <span style="color:#e6db74">&#34;&lt;aws account id&gt;.dkr.ecr.ap-southeast-1.amazonaws.com/ai-challenge-2024:keyframe-matcher&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;cpu&#34;</span>: <span style="color:#ae81ff">512</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;memory&#34;</span>: <span style="color:#ae81ff">2048</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;portMappings&#34;</span>: [
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;80&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;containerPort&#34;</span>: <span style="color:#ae81ff">80</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;hostPort&#34;</span>: <span style="color:#ae81ff">80</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;protocol&#34;</span>: <span style="color:#e6db74">&#34;tcp&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;appProtocol&#34;</span>: <span style="color:#e6db74">&#34;http&#34;</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;433&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;containerPort&#34;</span>: <span style="color:#ae81ff">443</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;hostPort&#34;</span>: <span style="color:#ae81ff">443</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;protocol&#34;</span>: <span style="color:#e6db74">&#34;tcp&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;appProtocol&#34;</span>: <span style="color:#e6db74">&#34;http&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            ],
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;essential&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;environment&#34;</span>: [
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;FOLDER_PREFIX&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;VIDEO_KEY&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;BUCKET_NAME&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            ],
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;logConfiguration&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;logDriver&#34;</span>: <span style="color:#e6db74">&#34;awslogs&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;options&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;awslogs-group&#34;</span>: <span style="color:#e6db74">&#34;/ecs/keyframe-matcher-definition-min&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;non-blocking&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;awslogs-create-group&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;max-buffer-size&#34;</span>: <span style="color:#e6db74">&#34;25m&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;awslogs-region&#34;</span>: <span style="color:#e6db74">&#34;ap-southeast-1&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;awslogs-stream-prefix&#34;</span>: <span style="color:#e6db74">&#34;ecs&#34;</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;secretOptions&#34;</span>: []
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;systemControls&#34;</span>: []
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;family&#34;</span>: <span style="color:#e6db74">&#34;keyframe-matcher-definition-min&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;taskRoleArn&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:iam::&lt;aws account id&gt;:role/TaskRole&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;executionRoleArn&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:iam::&lt;aws account id&gt;:role/TaskRole&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;networkMode&#34;</span>: <span style="color:#e6db74">&#34;awsvpc&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;revision&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;status&#34;</span>: <span style="color:#e6db74">&#34;ACTIVE&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;compatibilities&#34;</span>: [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;EC2&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;FARGATE&#34;</span>
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;requiresCompatibilities&#34;</span>: [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;FARGATE&#34;</span>
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;cpu&#34;</span>: <span style="color:#e6db74">&#34;512&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;memory&#34;</span>: <span style="color:#e6db74">&#34;2048&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;runtimePlatform&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;cpuArchitecture&#34;</span>: <span style="color:#e6db74">&#34;X86_64&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;operatingSystemFamily&#34;</span>: <span style="color:#e6db74">&#34;LINUX&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The core configuration specifying how the container runs within the task:</p>
+<p><strong>Container Definitions</strong></p>
+<ul>
+<li>
+<p><strong><code>name</code></strong>: <code>keyframe-matcher-container-min</code> – The name of the container.</p>
+</li>
+<li>
+<p><strong><code>image</code></strong>: <code>&lt;aws account id&gt;.dkr.ecr.ap-southeast-1.amazonaws.com/ai-challenge-2024:keyframe-matcher</code> – The Docker image stored in Amazon ECR that the container will use.</p>
+</li>
+<li>
+<p><strong><code>cpu</code></strong>: <code>512</code> – Allocates 0.5 vCPUs to the container.</p>
+</li>
+<li>
+<p><strong><code>memory</code></strong>: <code>2048</code> – Allocates 2 GB of memory to the container.</p>
+</li>
+<li>
+<p><strong><code>portMappings</code></strong>:</p>
+<ul>
+<li><strong><code>containerPort: 80</code></strong> – Exposes port 80 for HTTP traffic.</li>
+<li><strong><code>containerPort: 433</code></strong> – Exposes port 433 for traffic (note: may need correction to <code>443</code> for HTTPS).</li>
+</ul>
+</li>
+<li>
+<p><strong><code>essential</code></strong>: <code>true</code> – Indicates that the container is critical for the task; if this container stops, the entire task will stop.</p>
+</li>
+</ul>
+<p><strong>Environment Variables</strong>
+Environment variables passed to the container to configure behavior:</p>
+<ul>
+<li><strong><code>FOLDER_PREFIX</code></strong>: <code>&quot;&quot;</code> – The prefix for the S3 folder containing keyframes.</li>
+<li><strong><code>VIDEO_KEY</code></strong>: <code>&quot;&quot;</code> – The S3 key for the video file to process.</li>
+<li><strong><code>BUCKET_NAME</code></strong>: <code>&quot;&quot;</code> – The name of the S3 bucket containing the video and keyframes.</li>
+</ul>
+<p><strong>Logging Configuration</strong>
+Sets up logging to AWS CloudWatch Logs for monitoring and debugging:</p>
+<ul>
+<li><strong><code>logDriver</code></strong>: <code>awslogs</code> – Uses the AWS Logs driver to send logs to CloudWatch.</li>
+<li><strong><code>awslogs-group</code></strong>: <code>/ecs/keyframe-matcher-definition-min</code> – Specifies the CloudWatch Logs group where logs are stored.</li>
+<li><strong><code>awslogs-create-group</code></strong>: <code>true</code> – Automatically creates the log group if it does not exist.</li>
+<li><strong><code>max-buffer-size</code></strong>: <code>25m</code> – Specifies the maximum buffer size for logs.</li>
+<li><strong><code>awslogs-region</code></strong>: <code>ap-southeast-1</code> – Sets the AWS region for logging.</li>
+<li><strong><code>awslogs-stream-prefix</code></strong>: <code>ecs</code> – Adds a prefix to log streams to help identify them easily.</li>
+</ul>
+<p><strong>Task-Level Settings</strong></p>
+<ul>
+<li><strong><code>family</code></strong>: <code>&quot;keyframe-matcher-definition-min&quot;</code> – The family name of the task, used to identify it in ECS.</li>
+<li><strong><code>taskRoleArn</code></strong>: <code>arn:aws:iam::&lt;aws account id&gt;:role/TaskRole</code> – Specifies the IAM role that grants the task permissions to interact with AWS services.</li>
+<li><strong><code>executionRoleArn</code></strong>: <code>arn:aws:iam::&lt;aws account id&gt;:role/TaskRole</code> – Specifies the IAM role used by the ECS agent to pull images and publish logs.</li>
+</ul>
+<p><strong>Network Configuration</strong></p>
+<ul>
+<li><strong><code>networkMode</code></strong>: <code>awsvpc</code> – Uses the AWS VPC network mode, allowing the task to have its own network interfaces, security groups, and elastic network interfaces.</li>
+<li><strong><code>requiresCompatibilities</code></strong>: <code>[&quot;FARGATE&quot;]</code> – Specifies that the task requires Fargate launch type.</li>
+</ul>
+<p><strong>Resource Configuration</strong></p>
+<ul>
+<li><strong><code>cpu</code></strong>: <code>&quot;512&quot;</code> – Allocates 0.5 vCPUs to the task.</li>
+<li><strong><code>memory</code></strong>: <code>&quot;2048&quot;</code> – Allocates 2 GB of memory to the task.</li>
+<li><strong><code>ephemeralStorage</code></strong>
+<ul>
+<li><strong><code>sizeInGiB</code></strong>: <code>21</code> – Provides 21 GB of ephemeral storage for temporary data generated by the task.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Platform Configuration</strong></p>
+<ul>
+<li><strong><code>runtimePlatform</code></strong>:
+<ul>
+<li><strong><code>cpuArchitecture</code></strong>: <code>X86_64</code> – Specifies the CPU architecture.</li>
+<li><strong><code>operatingSystemFamily</code></strong>: <code>LINUX</code> – Specifies the operating system family used.</li>
+</ul>
+</li>
+</ul>
+<p>After pasting the JSON, click on <strong>Create</strong> button. We have successfully created a task definition for extracting keyframes from videos.</p>
+<p><img alt="Docs Version Dropdown" src="../img/revision-1.png"></p>
+<h3 id="3-run-task-to-extract-keyframes">3 Run Task to Extract Keyframes</h3>
+<h4 id="31-prepare-script-to-run-task">3.1 Prepare Script to Run Task</h4>
+<p>Create <code>run-task.py</code> in the <code>ecr-extract-keyframes</code> directory.
+This script will run the task definition to extract keyframes from a video file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> boto3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>s3_client <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#34;s3&#34;</span>)
+</span></span><span style="display:flex;"><span>ecs_client <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#34;ecs&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lambda_handler</span>(event, context):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    cluster_name <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#34;ECS_CLUSTER_NAME&#34;</span>]
+</span></span><span style="display:flex;"><span>    task_definition <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#34;TASK_DEFINITION&#34;</span>]
+</span></span><span style="display:flex;"><span>    subnet_ids <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#34;SUBNET_IDS&#34;</span>]
+</span></span><span style="display:flex;"><span>    security_group_id <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#34;SECURITY_GROUP_ID&#34;</span>]
+</span></span><span style="display:flex;"><span>    container_name <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#34;CONTAINER_NAME&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    network_config <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;awsvpcConfiguration&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;subnets&#34;</span>: subnet_ids,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;securityGroups&#34;</span>: [security_group_id],
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;assignPublicIp&#34;</span>: <span style="color:#e6db74">&#34;ENABLED&#34;</span>,
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FOLDERS <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    response <span style="color:#f92672">=</span> s3<span style="color:#f92672">.</span>list_objects_v2(Bucket<span style="color:#f92672">=</span>BUCKET_NAME, Prefix<span style="color:#f92672">=</span>PREFIX, Delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;/&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Get the subfolders in the bucket</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#39;CommonPrefixes&#39;</span> <span style="color:#f92672">in</span> response:
+</span></span><span style="display:flex;"><span>        subfolders <span style="color:#f92672">=</span> [prefix<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;Prefix&#39;</span>) <span style="color:#66d9ef">for</span> prefix <span style="color:#f92672">in</span> response[<span style="color:#e6db74">&#39;CommonPrefixes&#39;</span>]]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> subfolder <span style="color:#f92672">in</span> subfolders:
+</span></span><span style="display:flex;"><span>            FOLDERS<span style="color:#f92672">.</span>append(subfolder)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;No subfolders found.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> folder <span style="color:#f92672">in</span> FOLDERS:
+</span></span><span style="display:flex;"><span>        run_task_input <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;cluster&#34;</span>: cluster_name,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;launchType&#34;</span>: <span style="color:#e6db74">&#34;FARGATE&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;taskDefinition&#34;</span>: task_definition,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;networkConfiguration&#34;</span>: network_config,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;overrides&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;containerOverrides&#34;</span>: [
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;name&#34;</span>: container_name,  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;environment&#34;</span>: [
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;BUCKET_NAME&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;ai-challenge-2024&#34;</span>,
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;FOLDER_PREFIX&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;value&#34;</span>: folder,
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;VIDEO_KEY&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;value&#34;</span>: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;video/</span><span style="color:#e6db74">{</span>folder<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;/&#34;</span>)[<span style="color:#ae81ff">1</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">.mp4&#34;</span>,
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                        ],
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                ]
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        response <span style="color:#f92672">=</span> ecs_client<span style="color:#f92672">.</span>run_task(<span style="color:#f92672">**</span>run_task_input)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;statusCode&#34;</span>: <span style="color:#ae81ff">200</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;body&#34;</span>: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Task created successfully with Task ARN: </span><span style="color:#e6db74">{</span>response[<span style="color:#e6db74">&#34;tasks&#34;</span>][<span style="color:#ae81ff">0</span>][<span style="color:#e6db74">&#34;taskArn&#34;</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    event <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    context <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    lambda_handler(event, context)
+</span></span></code></pre></div><p><strong>Environment Variables</strong>:</p>
+<ul>
+<li><strong><code>ECS_CLUSTER_NAME</code></strong>: The name of the ECS cluster where the task will run.</li>
+<li><strong><code>TASK_DEFINITION</code></strong>: The ARN of the task definition created in the previous step.</li>
+<li><strong><code>SUBNET_IDS</code></strong>: The ID of the subnets where the task will run.</li>
+<li><strong><code>SECURITY_GROUP_ID</code></strong>: The ID of the security group for the task.</li>
+<li><strong><code>CONTAINER_NAME</code></strong>: The name of the container in the task definition.</li>
+</ul>
+<p><strong>Example Values</strong>:</p>
+<ul>
+<li><strong><code>ECS_CLUSTER_NAME</code></strong>: <code>ai-challenge-2024-cluster</code></li>
+<li><strong><code>TASK_DEFINITION</code></strong>: <code>arn:aws:ecs:ap-southeast-1:&lt;aws account id&gt;:task-definition/keyframe-matcher-definition-min:1</code></li>
+<li><strong><code>SUBNET_IDS</code></strong>: <code>[&quot;subnet-0a1b2c3d4e5f6g7h&quot;,&quot;subnet-1a2b3c4d5e6f7g8&quot;]</code></li>
+<li><strong><code>SECURITY_GROUP_ID</code></strong>: <code>sg-0123456789abcdef0</code></li>
+<li><strong><code>CONTAINER_NAME</code></strong>: <code>keyframe-matcher-container-min</code></li>
+</ul>
+<h4 id="32-run-task-by-local-cli">3.2 Run Task By Local CLI</h4>
+<p>Run the script to create a task to extract keyframes from the video file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python run-task.py
+</span></span></code></pre></div><p>The script will create a task in the ECS cluster to extract keyframes from the video file. You can monitor the task status in the ECS console.</p>
+<p><img alt="Docs Version Dropdown" src="../img/ecs-task-running.png"></p>
+<h4 id="33-verify-keyframes-extraction">3.3 Verify Keyframes Extraction</h4>
+<p>After the task completes, you can verify that the keyframes have been extracted and updated with metadata in the S3 bucket.</p>
+<ol>
+<li>Navigate to the S3 console.</li>
+<li>Open the bucket <code>ai-challenge-2024</code>.</li>
+<li>Check the <code>keyframes</code> folder for the extracted keyframes.</li>
+<li>Verify that the keyframes have been updated with metadata in the S3 console.
+<ul>
+<li><strong>Video Key</strong>: The S3 key of the video file.</li>
+<li><strong>Frame Number</strong>: The frame number in the video where the keyframe was found.</li>
+</ul>
+</li>
+</ol>
+<p><img alt="Docs Version Dropdown" src="../img/metadata-update.png"></p>
+<ol start="5">
+<li>Check results in the <code>metadata</code> folder for the CSV file containing the keyframe metadata.</li>
+</ol>
+<p><img alt="Docs Version Dropdown" src="../img/metadata-csv.png"></p>
+
+
+
+
+
+<footer class=" footline" >
+	
+</footer>
+
+        
+        </div>
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+            
+        
+
+        
+
+
+	 
+	 
+		
+			<a class="nav nav-prev" href="/semantic-video-search/vi/4-process-data/" title="Feature Extraction Using SageMaker and ECS"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/semantic-video-search/vi/4-process-data/4.2-embedding-processing-sagemaker/" title="Embedding Processing with SageMaker" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
+    </div>
+
+    </section>
+
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/semantic-video-search/js/clipboard.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/perfect-scrollbar.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/perfect-scrollbar.jquery.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/jquery.sticky.js?1725291367"></script>
+    <script src="/semantic-video-search/js/featherlight.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/highlight.pack.js?1725291367"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/semantic-video-search/js/modernizr.custom-3.6.0.js?1725291367"></script>
+    <script src="/semantic-video-search/js/learn.js?1725291367"></script>
+    <script src="/semantic-video-search/js/hugo-learn.js?1725291367"></script>
+
+    <link href="/semantic-video-search/mermaid/mermaid.css?1725291367" rel="stylesheet" />
+    <script src="/semantic-video-search/mermaid/mermaid.js?1725291367"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-158079754-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+        <script type="module">
+          
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+          import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+          
+          
+
+          
+          
+          const firebaseConfig = {
+            apiKey: "AIzaSyBk4I0jICesRliX2d-MkhqQrrxkaq1bqZM",
+            authDomain: "aws-hands-on-da9b8.firebaseapp.com",
+            projectId: "aws-hands-on-da9b8",
+            storageBucket: "aws-hands-on-da9b8.appspot.com",
+            messagingSenderId: "99697369891",
+            appId: "1:99697369891:web:5c0dc4e7dbf53534a5e296",
+            measurementId: "G-74VPJT2D9C"
+          };
+
+          
+          const app = initializeApp(firebaseConfig);
+          const analytics = getAnalytics(app);
+        </script>
+  </body>
+</html>

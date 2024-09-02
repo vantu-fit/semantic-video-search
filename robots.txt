@@ -1,0 +1,24 @@
+# robots.txt for https://auto.io.vn/
+
+# Allow all robots complete access
+User-agent: *
+Disallow:
+
+# Disallow specific folders or files (example)
+Disallow: /private/
+Disallow: /temp/
+Disallow: /cgi-bin/
+
+# Allow specific bots to access all content
+User-agent: Googlebot
+Disallow:
+
+User-agent: Bingbot
+Disallow:
+
+# Block specific bots from accessing the site
+User-agent: BadBot
+Disallow: /
+
+# Sitemap file location
+Sitemap: https://auto.io.vn/en/sitemap.xml

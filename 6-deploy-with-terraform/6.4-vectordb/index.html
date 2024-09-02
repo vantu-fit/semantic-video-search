@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Vector Database">
+    <meta property="og:description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+    <meta property="og:image" content="https://vantu-fit.github.io/semantic-video-search/images/1/logo.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"  content="Vector Database">
+    <meta name="twitter:description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+    <meta name="twitter:image" content="https://vantu-fit.github.io/semantic-video-search/images/1/logo.png">
+    <meta name="twitter:url" content="https://vantu-fit.github.io/semantic-video-search/">
+
+    <meta name="generator" content="Hugo 0.133.0">
+    <meta name="description" content="Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.">
+<meta name="author" content="daotq2k@gmail.com">
+
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
+    <title>Vector Database </title>
+
+    
+    <link href="/semantic-video-search/css/nucleus.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/fontawesome-all.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/hybrid.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/featherlight.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/perfect-scrollbar.min.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/auto-complete.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/atom-one-dark-reasonable.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/theme.css?1725291367" rel="stylesheet">
+    <link href="/semantic-video-search/css/hugo-theme.css?1725291367" rel="stylesheet">
+    
+    <link href="/semantic-video-search/css/theme-workshop.css?1725291367" rel="stylesheet">
+    
+    
+
+    <script src="/semantic-video-search/js/jquery-3.3.1.min.js?1725291367"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <style>
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+  </head>
+  <body class="" data-url="/semantic-video-search/6-deploy-with-terraform/6.4-vectordb/">
+    <nav id="sidebar" class="showVisitedLinks">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" href="/">
+
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" width="30%"><defs><style>.cls-1{fill:#fff;}.cls-2{fill:#f90;fill-rule:evenodd;}</style></defs><title>AWS-Logo_White-Color</title><path class="cls-1" d="M14.09,10.85a4.7,4.7,0,0,0,.19,1.48,7.73,7.73,0,0,0,.54,1.19.77.77,0,0,1,.12.38.64.64,0,0,1-.32.49l-1,.7a.83.83,0,0,1-.44.15.69.69,0,0,1-.49-.23,3.8,3.8,0,0,1-.6-.77q-.25-.42-.51-1a6.14,6.14,0,0,1-4.89,2.3,4.54,4.54,0,0,1-3.32-1.19,4.27,4.27,0,0,1-1.22-3.2A4.28,4.28,0,0,1,3.61,7.75,6.06,6.06,0,0,1,7.69,6.46a12.47,12.47,0,0,1,1.76.13q.92.13,1.91.36V5.73a3.65,3.65,0,0,0-.79-2.66A3.81,3.81,0,0,0,7.86,2.3a7.71,7.71,0,0,0-1.79.22,12.78,12.78,0,0,0-1.79.57,4.55,4.55,0,0,1-.58.22l-.26,0q-.35,0-.35-.52V2a1.09,1.09,0,0,1,.12-.58,1.2,1.2,0,0,1,.47-.35A10.88,10.88,0,0,1,5.77.32,10.19,10.19,0,0,1,8.36,0a6,6,0,0,1,4.35,1.35,5.49,5.49,0,0,1,1.38,4.09ZM7.34,13.38a5.36,5.36,0,0,0,1.72-.31A3.63,3.63,0,0,0,10.63,12,2.62,2.62,0,0,0,11.19,11a5.63,5.63,0,0,0,.16-1.44v-.7a14.35,14.35,0,0,0-1.53-.28,12.37,12.37,0,0,0-1.56-.1,3.84,3.84,0,0,0-2.47.67A2.34,2.34,0,0,0,5,11a2.35,2.35,0,0,0,.61,1.76A2.4,2.4,0,0,0,7.34,13.38Zm13.35,1.8a1,1,0,0,1-.64-.16,1.3,1.3,0,0,1-.35-.65L15.81,1.51a3,3,0,0,1-.15-.67.36.36,0,0,1,.41-.41H17.7a1,1,0,0,1,.65.16,1.4,1.4,0,0,1,.33.65l2.79,11,2.59-11A1.17,1.17,0,0,1,24.39.6a1.1,1.1,0,0,1,.67-.16H26.4a1.1,1.1,0,0,1,.67.16,1.17,1.17,0,0,1,.32.65L30,12.39,32.88,1.25A1.39,1.39,0,0,1,33.22.6a1,1,0,0,1,.65-.16h1.54a.36.36,0,0,1,.41.41,1.36,1.36,0,0,1,0,.26,3.64,3.64,0,0,1-.12.41l-4,12.86a1.3,1.3,0,0,1-.35.65,1,1,0,0,1-.64.16H29.25a1,1,0,0,1-.67-.17,1.26,1.26,0,0,1-.32-.67L25.67,3.64,23.11,14.34a1.26,1.26,0,0,1-.32.67,1,1,0,0,1-.67.17Zm21.36.44a11.28,11.28,0,0,1-2.56-.29,7.44,7.44,0,0,1-1.92-.67,1,1,0,0,1-.61-.93v-.84q0-.52.38-.52a.9.9,0,0,1,.31.06l.42.17a8.77,8.77,0,0,0,1.83.58,9.78,9.78,0,0,0,2,.2,4.48,4.48,0,0,0,2.43-.55,1.76,1.76,0,0,0,.86-1.57,1.61,1.61,0,0,0-.45-1.16A4.29,4.29,0,0,0,43,9.22l-2.41-.76A5.15,5.15,0,0,1,38,6.78a3.94,3.94,0,0,1-.83-2.41,3.7,3.7,0,0,1,.45-1.85,4.47,4.47,0,0,1,1.19-1.37A5.27,5.27,0,0,1,40.51.29,7.4,7.4,0,0,1,42.6,0a8.87,8.87,0,0,1,1.12.07q.57.07,1.08.19t.95.26a4.27,4.27,0,0,1,.7.29,1.59,1.59,0,0,1,.49.41.94.94,0,0,1,.15.55v.79q0,.52-.38.52a1.76,1.76,0,0,1-.64-.2,7.74,7.74,0,0,0-3.2-.64,4.37,4.37,0,0,0-2.21.47,1.6,1.6,0,0,0-.79,1.48,1.58,1.58,0,0,0,.49,1.18,4.94,4.94,0,0,0,1.83.92L44.55,7a5.08,5.08,0,0,1,2.57,1.6A3.76,3.76,0,0,1,47.9,11a4.21,4.21,0,0,1-.44,1.93,4.4,4.4,0,0,1-1.21,1.47,5.43,5.43,0,0,1-1.85.93A8.25,8.25,0,0,1,42.05,15.62Z"></path><path class="cls-2" d="M45.19,23.81C39.72,27.85,31.78,30,25,30A36.64,36.64,0,0,1,.22,20.57c-.51-.46-.06-1.09.56-.74A49.78,49.78,0,0,0,25.53,26.4,49.23,49.23,0,0,0,44.4,22.53C45.32,22.14,46.1,23.14,45.19,23.81Z"></path><path class="cls-2" d="M47.47,21.21c-.7-.9-4.63-.42-6.39-.21-.53.06-.62-.4-.14-.74,3.13-2.2,8.27-1.57,8.86-.83s-.16,5.89-3.09,8.35c-.45.38-.88.18-.68-.32C46.69,25.8,48.17,22.11,47.47,21.21Z"></path></svg>
+
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
+</div>
+
+<script type="text/javascript" src="/semantic-video-search/js/lunr.min.js?1725291367"></script>
+<script type="text/javascript" src="/semantic-video-search/js/auto-complete.js?1725291367"></script>
+<script type="text/javascript">
+    
+        var baseurl = "https:\/\/vantu-fit.github.io\/semantic-video-search\/";
+    
+</script>
+<script type="text/javascript" src="/semantic-video-search/js/search.js?1725291367"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/1-introduction/" title="Introduction" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/1-introduction/">
+           <b> 1 </b> Introduction
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/2-settup-s3/" title="Setting Up S3 for Video Storage" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/2-settup-s3/">
+           <b> 2 </b> Setting Up S3 for Video Storage
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/" title="Ingesting Data with ECS Fargate" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/">
+           <b> 3 </b> Ingesting Data with ECS Fargate
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/3.1-create-vpc/" title="Create VPC" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/3.1-create-vpc/">
+           <b> 3.1 </b> Create VPC
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/3.2-erc-repo/" title="Set Up ECR Repository" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/3.2-erc-repo/">
+           <b> 3.2 </b> Set Up ECR Repository
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/3.3-ecs-task/" title="Create ECS Task Definition" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/3.3-ecs-task/">
+           <b> 3.3 </b> Create ECS Task Definition
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/3-ingrest-data/3.4-run-task/" title="Run ECS Task" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/3-ingrest-data/3.4-run-task/">
+           <b> 3.4 </b> Run ECS Task
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/4-process-data/" title="Feature Extraction Using SageMaker and ECS" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/4-process-data/">
+           <b> 4 </b> Feature Extraction Using SageMaker and ECS
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/4-process-data/4.1-extract-keyframes-ecs/" title="Extract Keyframes Using ECS" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/4-process-data/4.1-extract-keyframes-ecs/">
+           <b> 4.1 </b> Extract Keyframes Using ECS
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/4-process-data/4.2-embedding-processing-sagemaker/" title="Embedding Processing with SageMaker" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/4-process-data/4.2-embedding-processing-sagemaker/">
+           <b> 4.2 </b> Embedding Processing with SageMaker
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/5-vectordb-opensearch/" title="Implementing OpenSearch for Vector Database" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/5-vectordb-opensearch/">
+           <b> 5 </b> Implementing OpenSearch for Vector Database
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/5-vectordb-opensearch/5.1-set-up-cluster/" title="Set Up OpenSearch Cluster" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/5-vectordb-opensearch/5.1-set-up-cluster/">
+           <b> 5.1 </b> Set Up OpenSearch Cluster
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/5-vectordb-opensearch/5.2-create-index-and-indexing-data/" title="Create Index and Indexing Data With Python SDK" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/5-vectordb-opensearch/5.2-create-index-and-indexing-data/">
+           <b> 5.2 </b> Create Index and Indexing Data With Python SDK
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/5-vectordb-opensearch/5.3-query-by-text/" title="Query by Text" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/5-vectordb-opensearch/5.3-query-by-text/">
+           <b> 5.3 </b> Query by Text
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/" title="Deploy with Terraform" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/">
+           <b> 6 </b> Deploy with Terraform
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.1-settup/" title="Setup" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.1-settup/">
+           <b> 6.1 </b> Setup
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.2-processing-data/" title="Processing Data" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.2-processing-data/">
+           <b> 6.2 </b> Processing Data
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.3-embedding/" title="Embedding" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.3-embedding/">
+           <b> 6.3 </b> Embedding
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.4-vectordb/" title="Vector Database" class="dd-item 
+        
+        active
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.4-vectordb/">
+           <b> 6.4 </b> Vector Database
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/6-deploy-with-terraform/6.5-cms/" title="CMS" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/6-deploy-with-terraform/6.5-cms/">
+           <b> 6.5 </b> CMS
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/semantic-video-search/7-clean-up/" title="Clean Up" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/semantic-video-search/7-clean-up/">
+           <b> 7 </b> Clean Up
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://aws.amazon.com/blogs"><i class='fab fa-aws'></i> AWS Study Group - Blog</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://www.facebook.com/groups/awsstudygroupfcj"><i class='fab fa-facebook'></i> AWS Study Group - FB Group</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/vantu-fit/"><i class='fab fa-github'></i> GitHub - Đỗ Văn Tư</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://www.linkedin.com/in/vantudo/"><i class='fab fa-linkedin'></i> Linkedin - Đỗ Văn Tư</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="prefooter">
+      <hr/>
+      <ul>
+      
+        <li>
+          <a class="padding">
+            <i class="fas fa-language fa-fw"></i>
+          <div class="select-style">
+            <select id="select-language" onchange="location = this.value;">
+          
+          
+          
+              
+              
+                  
+                    
+                    
+                      <option id="en" value="https://vantu-fit.github.io/semantic-video-search/6-deploy-with-terraform/6.4-vectordb/" selected>English</option>
+                    
+                  
+              
+                  
+              
+          
+        </select>
+        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          width="255px" height="255px" viewBox="0 0 255 255" style="enable-background:new 0 0 255 255;" xml:space="preserve">
+          <g>
+            <g id="arrow-drop-down">
+              <polygon points="0,63.75 127.5,191.25 255,63.75 		" />
+            </g>
+          </g>
+        </svg>
+        </div>
+        </a>
+        </li>
+      
+      
+      
+        <li><a class="padding" href="#" data-clear-history-toggle=""><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+      
+      </ul>
+    </section>
+    
+    <section id="footer">
+      <left>
+    
+     <b> Workshop</b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7920860&style=0038&nbdigits=9&type=page&initCount=0" title="Migrate" Alt="web counter"   border="0" /></a>  <br>
+     <b> <a href="https://cloudjourney.awsstudygroup.com/">Cloud Journey</a></b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7830807&style=0038&nbdigits=9&type=page&initCount=0" title="Total CLoud Journey" Alt="web counter"   border="0"   />
+     
+</left>
+<left>
+    <br>
+    <br>
+        <b> Last Updated </b> <br>
+        <i><font color=orange>26-11-2023</font></i>
+    </left>
+    <left>
+        <br>
+        <br>
+            <b> Team </b> <br>
+            <i> <a href="https://www.linkedin.com/in/jotaguy"  style="color:orange">Gia Hưng </a> <br>
+        </i>
+        </left>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="https://schema.org/Book">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/semantic-video-search/'>Semantic Video Search Vector Database</a> > <a href='/semantic-video-search/6-deploy-with-terraform/'>Deploy with Terraform</a> > Vector Database
+          
+        
+          
+        
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-create-role-for-lambda-index-lambda-query">1. Create Role for lambda index, lambda query</a></li>
+        <li><a href="#2-create-lambda-function-for-indexing-and-querying">2. Create Lambda Function for Indexing and Querying</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+        <div id="head-tags">
+        
+        </div>
+        
+        <div id="body-inner">
+          
+            <h1>
+              
+              Vector Database
+            </h1>
+          
+
+        
+          <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "6-deploy-with-terraform",
+              "name": "Vector Database",
+              "description": "Learn how to build a Semantic Video Search Vector Database using AWS services such as SageMaker, S3, OpenSearch, ECS Fargate, and Lambda.",
+              "url": "https:\/\/vantu-fit.github.io\/semantic-video-search\/6-deploy-with-terraform\/6.4-vectordb\/",
+              "image": "https:\/\/vantu-fit.github.io\/semantic-video-search\/images\/1\/logo.png",
+              "author": {
+                "@type": "Person",
+                "name": "daotq2k@gmail.com"
+              },
+              "datePublished": "2024-09-02 22:36:07.7460085 \u002b0700 \u002b07 m=\u002b0.737603901",
+              "dateModified": "2024-09-02 22:36:07.7460085 \u002b0700 \u002b07 m=\u002b0.737603901"
+            }
+          </script>
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1014651997538036"
+          crossorigin="anonymous"></script>
+
+
+	<h3 id="1-create-role-for-lambda-index-lambda-query">1. Create Role for lambda index, lambda query</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Lambda Query Role
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_caller_identity&#34;</span> <span style="color:#e6db74">&#34;current&#34;</span> {}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role&#34;</span> <span style="color:#e6db74">&#34;lambda_opensearch_sagemaker_role&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span> = <span style="color:#e6db74">&#34;LambdaOpenSearchSageMakerRoleQuery&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">assume_role_policy</span> = jsonencode({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Version</span> = <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Statement</span> = [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Effect</span> = <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Principal</span> = {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">Service</span> = <span style="color:#e6db74">&#34;lambda.amazonaws.com&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Action</span> = <span style="color:#e6db74">&#34;sts:AssumeRole&#34;</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_policy&#34;</span> <span style="color:#e6db74">&#34;opensearch_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>        = <span style="color:#e6db74">&#34;OpenSearchAccessPolicy&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">description</span> = <span style="color:#e6db74">&#34;Allow Lambda to access OpenSearch domains&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy</span> = jsonencode({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Version</span> = <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Statement</span> = [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Effect</span> = <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Action</span> = [
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;es:ESHttpPost&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;es:ESHttpGet&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;es:ESHttpPut&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;es:ESHttpDelete&#34;</span>
+</span></span><span style="display:flex;"><span>        ],<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        # Resource = &#34;arn:aws:es:ap-southeast-1:${data.aws_caller_identity.current.account_id}:domain/*&#34;  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        # TODO
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Resource</span> = <span style="color:#e6db74">&#34;*&#34;</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_policy&#34;</span> <span style="color:#e6db74">&#34;sagemaker_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>        = <span style="color:#e6db74">&#34;SageMakerInvokePolicy&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">description</span> = <span style="color:#e6db74">&#34;Allow Lambda to invoke SageMaker endpoint&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy</span> = jsonencode({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Version</span> = <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Statement</span> = [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Effect</span> = <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Action</span> = [
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;sagemaker:InvokeEndpoint&#34;</span>
+</span></span><span style="display:flex;"><span>        ],<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        # Resource = &#34;arn:aws:sagemaker:ap-southeast-1:${data.aws_caller_identity.current.account_id}:endpoint/*&#34; 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        # TODO
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Resource</span> = <span style="color:#e6db74">&#34;*&#34;</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_policy&#34;</span> <span style="color:#e6db74">&#34;cloudwatch_logs_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>        = <span style="color:#e6db74">&#34;CloudWatchLogsPolicy&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">description</span> = <span style="color:#e6db74">&#34;Allow Lambda to write logs to CloudWatch&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy</span> = jsonencode({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Version</span> = <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Statement</span> = [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Effect</span> = <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Action</span> = [
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;logs:CreateLogGroup&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;logs:CreateLogStream&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;logs:PutLogEvents&#34;</span>
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Resource</span> = <span style="color:#e6db74">&#34;arn:aws:logs:ap-southeast-1:</span><span style="color:#e6db74">${</span>data.<span style="color:#a6e22e">aws_caller_identity</span>.<span style="color:#a6e22e">current</span>.<span style="color:#a6e22e">account_id</span><span style="color:#e6db74">}</span><span style="color:#e6db74">:*&#34;</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34;</span> <span style="color:#e6db74">&#34;attach_opensearch_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">role</span>       = <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">lambda_opensearch_sagemaker_role</span>.<span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy_arn</span> = <span style="color:#a6e22e">aws_iam_policy</span>.<span style="color:#a6e22e">opensearch_policy</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34;</span> <span style="color:#e6db74">&#34;attach_sagemaker_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">role</span>       = <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">lambda_opensearch_sagemaker_role</span>.<span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy_arn</span> = <span style="color:#a6e22e">aws_iam_policy</span>.<span style="color:#a6e22e">sagemaker_policy</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34;</span> <span style="color:#e6db74">&#34;attach_cloudwatch_logs_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">role</span>       = <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">lambda_opensearch_sagemaker_role</span>.<span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy_arn</span> = <span style="color:#a6e22e">aws_iam_policy</span>.<span style="color:#a6e22e">cloudwatch_logs_policy</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Lambda Index Role
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role&#34;</span> <span style="color:#e6db74">&#34;lambda_opensearch_sagemaker_role_index&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span> = <span style="color:#e6db74">&#34;LambdaOpenSearchSageMakerRoleQueryIndex&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">assume_role_policy</span> = jsonencode({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Version</span> = <span style="color:#e6db74">&#34;2012-10-17&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Statement</span> = [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Action</span> = <span style="color:#e6db74">&#34;sts:AssumeRole&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Effect</span> = <span style="color:#e6db74">&#34;Allow&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Principal</span> = {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">Service</span> = <span style="color:#e6db74">&#34;lambda.amazonaws.com&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34;</span> <span style="color:#e6db74">&#34;lambda_basic_execution_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">role</span>       = <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">lambda_opensearch_sagemaker_role_index</span>.<span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy_arn</span> = <span style="color:#e6db74">&#34;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34;</span> <span style="color:#e6db74">&#34;s3_read_only_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">role</span>       = <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">lambda_opensearch_sagemaker_role_index</span>.<span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy_arn</span> = <span style="color:#e6db74">&#34;arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34;</span> <span style="color:#e6db74">&#34;opensearch_access_policy&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">role</span>       = <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">lambda_opensearch_sagemaker_role_index</span>.<span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy_arn</span> = <span style="color:#e6db74">&#34;arn:aws:iam::aws:policy/AmazonOpenSearchServiceFullAccess&#34;</span><span style="color:#75715e"> # Thay thế bằng chính sách tùy chỉnh nếu cần
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="2-create-lambda-function-for-indexing-and-querying">2. Create Lambda Function for Indexing and Querying</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS Lambda Function Query
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_function&#34;</span> <span style="color:#e6db74">&#34;query&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">function_name</span> = <span style="color:#e6db74">&#34;query-vectordb&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">role</span>          = <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">lambda_opensearch_sagemaker_role</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">handler</span>       = <span style="color:#e6db74">&#34;lambda_function.lambda_handler&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">runtime</span>       = <span style="color:#e6db74">&#34;python3.8&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">filename</span>      = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">root</span><span style="color:#e6db74">}</span><span style="color:#e6db74">/src/vectordb/lambda-query/lambda_function.zip&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">timeout</span>       = <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">memory_size</span>   = <span style="color:#ae81ff">128</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">environment</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">variables</span> = {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">SAGEMAKER_ENDPOINT_NAME</span> = var.<span style="color:#a6e22e">sagemaker_endpoint_name</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">depends_on</span> = [
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">lambda_opensearch_sagemaker_role</span>,
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;lambda_function_name&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">value</span> = <span style="color:#a6e22e">aws_lambda_function</span>.<span style="color:#a6e22e">query</span>.<span style="color:#a6e22e">function_name</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;lambda_invoke_arn&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">value</span> = <span style="color:#a6e22e">aws_lambda_function</span>.<span style="color:#a6e22e">query</span>.<span style="color:#a6e22e">invoke_arn</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS Lambda Function Indexing
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_function&#34;</span> &#34;index<span style="color:#e6db74">&#34; {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  function_name = &#34;</span><span style="color:#a6e22e">index</span><span style="color:#f92672">-</span><span style="color:#a6e22e">vectordb</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  role          = aws_iam_role.lambda_opensearch_sagemaker_role_index.arn
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  handler       = &#34;</span><span style="color:#a6e22e">lambda_function</span>.<span style="color:#a6e22e">lambda_handler</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  runtime       = &#34;</span><span style="color:#a6e22e">python3</span>.<span style="color:#ae81ff">8</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  filename      = &#34;</span><span style="color:#960050;background-color:#1e0010">$</span>{<span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">root</span>}<span style="color:#f92672">/</span><span style="color:#a6e22e">src</span><span style="color:#f92672">/</span><span style="color:#a6e22e">vectordb</span><span style="color:#f92672">/</span><span style="color:#a6e22e">lambda</span>-index<span style="color:#f92672">/</span><span style="color:#a6e22e">lambda_function</span>.<span style="color:#a6e22e">zip</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  timeout       = 300
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  memory_size   = 1024
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  layers = [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    aws_lambda_layer_version.opensearch_numpy_layer.arn,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    # aws_lambda_layer_version.aws4auth_layer_zip.arn
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  environment {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    variables = {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      OPENSEARCH_ENDPOINT = var.opensearch_domain_endpoint
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      INDEX_NAME          = var.index_name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      USERNAME            = var.username
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      PASSWORD            = var.password
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">resource &#34;</span><span style="color:#a6e22e">aws_s3_bucket_object</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#a6e22e">opensearch_numpy_layer_zip</span><span style="color:#e6db74">&#34; {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  bucket = var.bucket_name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  key    = &#34;</span><span style="color:#a6e22e">lambda</span><span style="color:#f92672">-</span><span style="color:#a6e22e">layer</span><span style="color:#f92672">/</span><span style="color:#a6e22e">lamda_layer</span>.<span style="color:#a6e22e">zip</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  source = &#34;</span><span style="color:#960050;background-color:#1e0010">$</span>{<span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">root</span>}<span style="color:#f92672">/</span><span style="color:#a6e22e">src</span><span style="color:#f92672">/</span><span style="color:#a6e22e">vectordb</span><span style="color:#f92672">/</span><span style="color:#a6e22e">lambda</span>-index<span style="color:#f92672">/</span><span style="color:#a6e22e">lambda_layer</span>.<span style="color:#a6e22e">zip</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">resource &#34;</span><span style="color:#a6e22e">aws_lambda_layer_version</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#a6e22e">opensearch_numpy_layer</span><span style="color:#e6db74">&#34; {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  layer_name          = &#34;</span><span style="color:#a6e22e">opensearch</span><span style="color:#f92672">-</span><span style="color:#a6e22e">numpy</span><span style="color:#f92672">-</span><span style="color:#a6e22e">layer</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  s3_bucket           = var.bucket_name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  s3_key              = aws_s3_bucket_object.opensearch_numpy_layer_zip.key
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  compatible_runtimes = [&#34;</span><span style="color:#a6e22e">python3</span>.<span style="color:#ae81ff">8</span><span style="color:#e6db74">&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  description         = &#34;</span><span style="color:#a6e22e">Lambda</span> <span style="color:#a6e22e">layer</span> <span style="color:#a6e22e">with</span> <span style="color:#a6e22e">numpy</span> <span style="color:#a6e22e">and</span> <span style="color:#a6e22e">opensearch</span><span style="color:#f92672">-</span><span style="color:#a6e22e">py</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span></code></pre></div><ol start="3">
+<li>Create S3 notifications</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Lambda Permission to Allow S3 to Invoke
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_permission&#34;</span> <span style="color:#e6db74">&#34;allow_s3_invocation_embeddings&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">statement_id</span>  = <span style="color:#e6db74">&#34;AllowS3InvokeLambda&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">action</span>        = <span style="color:#e6db74">&#34;lambda:InvokeFunction&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">function_name</span> = <span style="color:#a6e22e">aws_lambda_function</span>.<span style="color:#a6e22e">index</span>.<span style="color:#a6e22e">function_name</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">principal</span>     = <span style="color:#e6db74">&#34;s3.amazonaws.com&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">source_arn</span>    = var.<span style="color:#a6e22e">bucket_arn</span>
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Embeddings Bucket Notification
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#################################
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_s3_bucket_notification&#34;</span> <span style="color:#e6db74">&#34;embeddings_bucket_notification&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">bucket</span> = var.<span style="color:#a6e22e">bucket_name</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">lambda_function</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">lambda_function_arn</span> = <span style="color:#a6e22e">aws_lambda_function</span>.<span style="color:#a6e22e">index</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">events</span>              = [<span style="color:#e6db74">&#34;s3:ObjectCreated:*&#34;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filter_suffix</span>       = <span style="color:#e6db74">&#34;.npy&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filter_prefix</span>       = <span style="color:#e6db74">&#34;embeddings/&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">lambda_function</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">lambda_function_arn</span> = var.<span style="color:#a6e22e">lambda_processing_data_arn</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">events</span>              = [<span style="color:#e6db74">&#34;s3:ObjectCreated:*&#34;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filter_suffix</span>       = <span style="color:#e6db74">&#34;.mp4&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filter_prefix</span>       = <span style="color:#e6db74">&#34;video/&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="4">
+<li>Code for Lambda Function</li>
+</ol>
+<ul>
+<li>Code for Lambda Index</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> json
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> boto3
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> opensearchpy <span style="color:#f92672">import</span> OpenSearch, RequestsHttpConnection , helpers
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>OPENSEARCH_ENDPOINT <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;OPENSEARCH_ENDPOINT&#34;</span>)
+</span></span><span style="display:flex;"><span>OPENSEARCH_INDEX <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;INDEX_NAME&#34;</span>)
+</span></span><span style="display:flex;"><span>USERNAME <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;USERNAME&#34;</span>)
+</span></span><span style="display:flex;"><span>PASSWORD <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;PASSWORD&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>s3_client <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#34;s3&#34;</span>)
+</span></span><span style="display:flex;"><span>client <span style="color:#f92672">=</span> OpenSearch(
+</span></span><span style="display:flex;"><span>    hosts<span style="color:#f92672">=</span>[OPENSEARCH_ENDPOINT],
+</span></span><span style="display:flex;"><span>    http_auth<span style="color:#f92672">=</span>(USERNAME, PASSWORD),
+</span></span><span style="display:flex;"><span>    use_ssl<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>,
+</span></span><span style="display:flex;"><span>    verify_certs<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>,
+</span></span><span style="display:flex;"><span>    connection_class<span style="color:#f92672">=</span>RequestsHttpConnection,
+</span></span><span style="display:flex;"><span>    timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">120</span>,
+</span></span><span style="display:flex;"><span>    max_retries<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>,
+</span></span><span style="display:flex;"><span>    retry_on_timeout<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>,
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create_index</span>(self):
+</span></span><span style="display:flex;"><span>        index_body <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;settings&#34;</span>: {<span style="color:#e6db74">&#34;index&#34;</span>: {<span style="color:#e6db74">&#34;knn&#34;</span>: <span style="color:#66d9ef">True</span>}},
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;mappings&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;image_embedding&#34;</span>: {
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;knn_vector&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;dimension&#34;</span>: <span style="color:#ae81ff">512</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;method&#34;</span>: {
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;hnsw&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;engine&#34;</span>: <span style="color:#e6db74">&#34;faiss&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;space_type&#34;</span>: <span style="color:#e6db74">&#34;l2&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;ef_construction&#34;</span>: <span style="color:#ae81ff">256</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;m&#34;</span>: <span style="color:#ae81ff">48</span>,
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                        },
+</span></span><span style="display:flex;"><span>                    },
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;video&#34;</span>: {<span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;text&#34;</span>},
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;image&#34;</span>: {<span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;integer&#34;</span>},
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Tạo index</span>
+</span></span><span style="display:flex;"><span>        response <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>client<span style="color:#f92672">.</span>indices<span style="color:#f92672">.</span>create(index<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>index_name, body<span style="color:#f92672">=</span>index_body)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Index created: </span><span style="color:#e6db74">{</span>response<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">format_video_name</span>(video_name):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> video_name<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;/&#34;</span>)[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;.&#34;</span>)[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">format_image_name</span>(image_name):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 2 =&gt; 002.jpg</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> image_name<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;/&#34;</span>)[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;.&#34;</span>)[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>zfill(<span style="color:#ae81ff">3</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lambda_handler</span>(event, context):
+</span></span><span style="display:flex;"><span>    print(event)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    bucket <span style="color:#f92672">=</span> event[<span style="color:#e6db74">&#34;Records&#34;</span>][<span style="color:#ae81ff">0</span>][<span style="color:#e6db74">&#34;s3&#34;</span>][<span style="color:#e6db74">&#34;bucket&#34;</span>][<span style="color:#e6db74">&#34;name&#34;</span>]
+</span></span><span style="display:flex;"><span>    key <span style="color:#f92672">=</span> event[<span style="color:#e6db74">&#34;Records&#34;</span>][<span style="color:#ae81ff">0</span>][<span style="color:#e6db74">&#34;s3&#34;</span>][<span style="color:#e6db74">&#34;object&#34;</span>][<span style="color:#e6db74">&#34;key&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># bucket = &#39;bucket-video-tftftftfttftf&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># key = &#39;embeddings/L01_V001.npy&#39;</span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Bucket: </span><span style="color:#e6db74">{</span>bucket<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Key: </span><span style="color:#e6db74">{</span>key<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    video_name <span style="color:#f92672">=</span> format_video_name(key)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Create index if not exists</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> client<span style="color:#f92672">.</span>indices<span style="color:#f92672">.</span>exists(index<span style="color:#f92672">=</span>OPENSEARCH_INDEX):
+</span></span><span style="display:flex;"><span>        create_index(client)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    embeddings <span style="color:#f92672">=</span> s3_client<span style="color:#f92672">.</span>get_object(Bucket<span style="color:#f92672">=</span>bucket, Key<span style="color:#f92672">=</span>key)[<span style="color:#e6db74">&#34;Body&#34;</span>]<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    embeddings <span style="color:#f92672">=</span> numpy<span style="color:#f92672">.</span>load(embeddings)<span style="color:#f92672">.</span>tolist()
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Embeddings: &#34;</span>, embeddings[<span style="color:#ae81ff">0</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Create mapping of embeddings to video names</span>
+</span></span><span style="display:flex;"><span>    docs <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i, embedding <span style="color:#f92672">in</span> enumerate(embeddings):
+</span></span><span style="display:flex;"><span>        doc <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;_op_type&#34;</span>: <span style="color:#e6db74">&#34;index&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;_index&#34;</span>: OPENSEARCH_INDEX,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;_id&#34;</span>: i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;_source&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;image_embedding&#34;</span>: embedding,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;image&#34;</span>: format_image_name(i),
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;video&#34;</span>: video_name,
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        docs<span style="color:#f92672">.</span>append(doc)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Creating docs: OK&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    response <span style="color:#f92672">=</span> helpers<span style="color:#f92672">.</span>bulk(client, docs)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Response: &#34;</span>, response)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;statusCode&#34;</span>: <span style="color:#ae81ff">200</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;body&#34;</span>: json<span style="color:#f92672">.</span>dumps(<span style="color:#e6db74">&#34;Indexing complete!&#34;</span>),
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><ul>
+<li>Code for Lambda Query</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#################################</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS Lambda Function Query</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#################################</span>
+</span></span><span style="display:flex;"><span>resource <span style="color:#e6db74">&#34;aws_lambda_function&#34;</span> <span style="color:#e6db74">&#34;query&#34;</span> {
+</span></span><span style="display:flex;"><span>  function_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;query-vectordb&#34;</span>
+</span></span><span style="display:flex;"><span>  role          <span style="color:#f92672">=</span> aws_iam_role<span style="color:#f92672">.</span>lambda_opensearch_sagemaker_role<span style="color:#f92672">.</span>arn
+</span></span><span style="display:flex;"><span>  handler       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda_function.lambda_handler&#34;</span>
+</span></span><span style="display:flex;"><span>  runtime       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;python3.8&#34;</span>
+</span></span><span style="display:flex;"><span>  filename      <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;$</span><span style="color:#e6db74">{path.root}</span><span style="color:#e6db74">/src/vectordb/lambda-query/lambda_function.zip&#34;</span>
+</span></span><span style="display:flex;"><span>  timeout       <span style="color:#f92672">=</span> <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>  memory_size   <span style="color:#f92672">=</span> <span style="color:#ae81ff">128</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  environment {
+</span></span><span style="display:flex;"><span>    variables <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      SAGEMAKER_ENDPOINT_NAME <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>sagemaker_endpoint_name
+</span></span><span style="display:flex;"><span>      OPENSEARCH_ENDPOINT <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>opensearch_domain_endpoint
+</span></span><span style="display:flex;"><span>      INDEX_NAME          <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>index_name
+</span></span><span style="display:flex;"><span>      USERNAME            <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>username
+</span></span><span style="display:flex;"><span>      PASSWORD            <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>password
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  layers <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    aws_lambda_layer_version<span style="color:#f92672">.</span>opensearch_numpy_layer<span style="color:#f92672">.</span>arn,
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  depends_on <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    aws_iam_role<span style="color:#f92672">.</span>lambda_opensearch_sagemaker_role,
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>output <span style="color:#e6db74">&#34;lambda_function_name&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> aws_lambda_function<span style="color:#f92672">.</span>query<span style="color:#f92672">.</span>function_name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>output <span style="color:#e6db74">&#34;lambda_invoke_arn&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> aws_lambda_function<span style="color:#f92672">.</span>query<span style="color:#f92672">.</span>invoke_arn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#################################</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS Lambda Function Indexing</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#################################</span>
+</span></span><span style="display:flex;"><span>resource <span style="color:#e6db74">&#34;aws_lambda_function&#34;</span> <span style="color:#e6db74">&#34;index&#34;</span> {
+</span></span><span style="display:flex;"><span>  function_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;index-vectordb&#34;</span>
+</span></span><span style="display:flex;"><span>  role          <span style="color:#f92672">=</span> aws_iam_role<span style="color:#f92672">.</span>lambda_opensearch_sagemaker_role_index<span style="color:#f92672">.</span>arn
+</span></span><span style="display:flex;"><span>  handler       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda_function.lambda_handler&#34;</span>
+</span></span><span style="display:flex;"><span>  runtime       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;python3.8&#34;</span>
+</span></span><span style="display:flex;"><span>  filename      <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;$</span><span style="color:#e6db74">{path.root}</span><span style="color:#e6db74">/src/vectordb/lambda-index/lambda_function.zip&#34;</span>
+</span></span><span style="display:flex;"><span>  timeout       <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span>
+</span></span><span style="display:flex;"><span>  memory_size   <span style="color:#f92672">=</span> <span style="color:#ae81ff">1024</span>
+</span></span><span style="display:flex;"><span>  layers <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    aws_lambda_layer_version<span style="color:#f92672">.</span>opensearch_numpy_layer<span style="color:#f92672">.</span>arn,
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  environment {
+</span></span><span style="display:flex;"><span>    variables <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      OPENSEARCH_ENDPOINT <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>opensearch_domain_endpoint
+</span></span><span style="display:flex;"><span>      INDEX_NAME          <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>index_name
+</span></span><span style="display:flex;"><span>      USERNAME            <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>username
+</span></span><span style="display:flex;"><span>      PASSWORD            <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>password
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>resource <span style="color:#e6db74">&#34;aws_s3_bucket_object&#34;</span> <span style="color:#e6db74">&#34;opensearch_numpy_layer_zip&#34;</span> {
+</span></span><span style="display:flex;"><span>  bucket <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>bucket_name
+</span></span><span style="display:flex;"><span>  key    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda-layer/lamda_layer.zip&#34;</span>
+</span></span><span style="display:flex;"><span>  source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;$</span><span style="color:#e6db74">{path.root}</span><span style="color:#e6db74">/src/vectordb/lambda-index/lambda_layer.zip&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>resource <span style="color:#e6db74">&#34;aws_lambda_layer_version&#34;</span> <span style="color:#e6db74">&#34;opensearch_numpy_layer&#34;</span> {
+</span></span><span style="display:flex;"><span>  layer_name          <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;opensearch-numpy-layer&#34;</span>
+</span></span><span style="display:flex;"><span>  s3_bucket           <span style="color:#f92672">=</span> var<span style="color:#f92672">.</span>bucket_name
+</span></span><span style="display:flex;"><span>  s3_key              <span style="color:#f92672">=</span> aws_s3_bucket_object<span style="color:#f92672">.</span>opensearch_numpy_layer_zip<span style="color:#f92672">.</span>key
+</span></span><span style="display:flex;"><span>  compatible_runtimes <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;python3.8&#34;</span>]
+</span></span><span style="display:flex;"><span>  description         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Lambda layer with numpy and opensearch-py&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="5">
+<li>Create Lambda Layers</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd src/vectordb/lambda-index
+</span></span><span style="display:flex;"><span>pip install -r requirements.txt -t python
+</span></span><span style="display:flex;"><span>zip -r lambda_layer.zip python
+</span></span></code></pre></div>
+
+
+
+
+<footer class=" footline" >
+	
+</footer>
+
+        
+        </div>
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+
+        
+
+
+	 
+	 
+		
+			<a class="nav nav-prev" href="/semantic-video-search/6-deploy-with-terraform/6.3-embedding/" title="Embedding"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/semantic-video-search/6-deploy-with-terraform/6.5-cms/" title="CMS" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
+    </div>
+
+    </section>
+
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/semantic-video-search/js/clipboard.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/perfect-scrollbar.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/perfect-scrollbar.jquery.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/jquery.sticky.js?1725291367"></script>
+    <script src="/semantic-video-search/js/featherlight.min.js?1725291367"></script>
+    <script src="/semantic-video-search/js/highlight.pack.js?1725291367"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/semantic-video-search/js/modernizr.custom-3.6.0.js?1725291367"></script>
+    <script src="/semantic-video-search/js/learn.js?1725291367"></script>
+    <script src="/semantic-video-search/js/hugo-learn.js?1725291367"></script>
+
+    <link href="/semantic-video-search/mermaid/mermaid.css?1725291367" rel="stylesheet" />
+    <script src="/semantic-video-search/mermaid/mermaid.js?1725291367"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-158079754-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+        <script type="module">
+          
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+          import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+          
+          
+
+          
+          
+          const firebaseConfig = {
+            apiKey: "AIzaSyBk4I0jICesRliX2d-MkhqQrrxkaq1bqZM",
+            authDomain: "aws-hands-on-da9b8.firebaseapp.com",
+            projectId: "aws-hands-on-da9b8",
+            storageBucket: "aws-hands-on-da9b8.appspot.com",
+            messagingSenderId: "99697369891",
+            appId: "1:99697369891:web:5c0dc4e7dbf53534a5e296",
+            measurementId: "G-74VPJT2D9C"
+          };
+
+          
+          const app = initializeApp(firebaseConfig);
+          const analytics = getAnalytics(app);
+        </script>
+  </body>
+</html>
