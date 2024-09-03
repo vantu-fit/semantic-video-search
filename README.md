@@ -6,6 +6,9 @@ Introducing the "Semantic Video Search Vector Database" system! This system is d
 
 ![Semantic Video Search Vector Database](./images//semantic-architech.jpg)
 
+<!-- Link workshop -->
+Link to my workshop => [here](https://vantu-fit.github.io/semantic-video-search/)
+
 ## 2. Semantic Video Search Architecture Explanation
 
 #### 1. Processing Data
@@ -168,6 +171,8 @@ curl --location --request POST 'https://<api gateway id>.execute-api.ap-southeas
 - [ ] Improve the performance of the system
 - [ ] Setup CloudFront for the system
 
+### Thank you for reading!
+---
 
 
 
