@@ -1,4 +1,8 @@
-
+locals {
+  lambda_role_name             = "lambda_s3_ecs_role"
+  ecs_task_role_name           = "ecs_task_role"
+  ecs_task_execution_role_name = "ecs_task_execution_role"
+}
 
 #################################
 # Role for Lambda
@@ -14,7 +18,7 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name               = "lambda_s3_ecs_role"
+  name               = local.lambda_role_name
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
@@ -85,7 +89,7 @@ data "aws_iam_policy_document" "ecs_task_execution_assume_role" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name               = "ecs_task_execution_role"
+  name               = local.ecs_task_execution_role_name
   assume_role_policy = data.aws_iam_policy_document.ecs_task_execution_assume_role.json
 }
 
@@ -140,7 +144,7 @@ data "aws_iam_policy_document" "ecs_task_assume_role" {
 }
 
 resource "aws_iam_role" "ecs_task_role" {
-  name               = "ecs_task_role"
+  name               = local.ecs_task_role_name
   assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
 }
 

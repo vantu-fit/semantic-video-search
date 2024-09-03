@@ -1,4 +1,3 @@
-# import .env
 include .env
 
 setup:
@@ -49,7 +48,8 @@ update-embedding: zip-embedding
 
 update-processing: zip-processing
 	aws lambda update-function-code --function-name processing_data --zip-file fileb://src/processing-data/lambda/lambda_function.zip
-
+	
+zip-all: zip-query zip-index zip-embedding zip-processing
 update-all: update-query update-index update-embedding update-processing
 
 sign-up:

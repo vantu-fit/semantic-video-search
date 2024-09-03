@@ -1,13 +1,15 @@
 
 locals {
   container_name = "video-processing-container"
+  cluster_name   = "video-processing"
+  task_family    = "video-processing"
 }
 
 #################################
 # ECS Cluster
 #################################
 resource "aws_ecs_cluster" "video_processing" {
-  name = "video-processing"
+  name = local.cluster_name
   tags = var.common_tags
 }
 
@@ -16,7 +18,7 @@ resource "aws_ecs_cluster" "video_processing" {
 # ECS Task Definition
 #################################
 resource "aws_ecs_task_definition" "video_processing" {
-  family                   = "video-processing"
+  family                   = local.task_family
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   network_mode             = "awsvpc"

@@ -1,8 +1,12 @@
+locals {
+  repo_name = "semantic-repo"
+}
+
 #################################
 # ECR Private Repository
 #################################
 resource "aws_ecr_repository" "private_repo" {
-  name = "semantic-repo"
+  name = local.repo_name
   
   tags = var.common_tags
 }

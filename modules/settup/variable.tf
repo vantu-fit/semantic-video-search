@@ -25,3 +25,4 @@ variable "opensearch_master_user_password" {
     description = "The master user password for the OpenSearch domain"
     type        = string
 }
+

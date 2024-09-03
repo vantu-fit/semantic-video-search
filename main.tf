@@ -1,8 +1,9 @@
 locals {
-  username               = "admin"
-  password               = "admin"
-  index_name             = "semantic-index-test"
-  opensearch_domain_name = "semantic-search-domain"
+  username                = "admin"
+  password                = "admin"
+  index_name              = "semantic-index-test"
+  opensearch_domain_name  = var.opensearch_domain_name
+  sagemaker_endpoint_name = "clip-model-2024-08-31-15-38-39"
 }
 
 #################################
@@ -16,20 +17,6 @@ module "settup" {
   opensearch_master_user_password = local.password
 
   common_tags = local.common_tags
-}
-
-output "ecr_repo_url" {
-  value = module.settup.ecr_repo_url
-
-}
-
-output "opensearch_domain_endpoint" {
-  value = module.settup.opensearch_domain_endpoint
-
-}
-
-output "opensearch_domain_arn" {
-  value = module.settup.opensearch_domain_arn
 }
 
 #################################
@@ -50,10 +37,6 @@ module "processing_data" {
   security_group_id = module.settup.security_group_id
 }
 
-output "video_bucket_id" {
-  value = module.processing_data.video_bucket_id
-}
-
 #################################
 # Embedding Module
 #################################
@@ -61,11 +44,6 @@ module "embedding" {
   source = "./modules/embedding"
 
   bucket_id = module.processing_data.video_bucket_id
-
-}
-
-output "embedding_role_arn" {
-  value = module.embedding.sagemaker_processing_role_arn
 
 }
 
@@ -79,7 +57,7 @@ module "vectordb" {
 
   bucket_name             = module.processing_data.video_bucket_id
   bucket_arn              = module.processing_data.video_bucket_arn
-  sagemaker_endpoint_name = "clip-model-2024-08-31-15-38-39"
+  sagemaker_endpoint_name = local.sagemaker_endpoint_name
 
   lambda_processing_data_arn = module.processing_data.lambda_processing_data_arn
 
@@ -91,16 +69,9 @@ module "vectordb" {
   password                   = local.password
 }
 
-output "vectordb_lambda_function_name" {
-  value = module.vectordb.lambda_function_name
-}
-
-
 #################################
 # CMS Module
 #################################
-
-
 module "cms" {
   source = "./modules/cms"
 
@@ -108,11 +79,3 @@ module "cms" {
   lambda_invoke_arn = module.vectordb.lambda_invoke_arn
 }
 
-output "user_pool_id" {
-  value = module.cms.user_pool_id
-
-}
-
-output "user_pool_client_id" {
-  value = module.cms.user_pool_client_id
-}
