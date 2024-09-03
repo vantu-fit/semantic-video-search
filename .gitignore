@@ -4,4 +4,4 @@ terraform.tfstate.backup
 .terraform/
 .terraform.lock.hcl
 output.tf
-src/vectordb/lambda-index/python/
+/src/vectordb/lambda-index/python/lib/python3.8/site-packages/
