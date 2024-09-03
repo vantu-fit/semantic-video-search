@@ -1,4 +1,4 @@
-# Semantic Video Search Vector Database Workshop
+# Semantic Video Search Vector Database
 
 ## 1. Overview
 
@@ -73,9 +73,9 @@ This module manages the user interface and access control for the video search s
   - Several Lambda functions are invoked by API Gateway to handle different operations like searching videos, user management, etc.
 
 
-## 2. Quick Start
+## 3. Quick Start
 
-### 2.1. Setup 
+### 3.1. Setup 
 1. Create ECR repository
 ```bash
 cd semantic-video-search
@@ -112,18 +112,18 @@ SAGEMAKER_ENDPOINT_ROLE_ARN=arn:aws:iam::<aws account id>:role/sagemaker-local
 ```bash
 cd src/vectordb/sagemaker-endpoint && python setup.py && cd ../../..
 ```
-### 2.2. Deploy
+### 3.2. Deploy
 ```bash
 terraform apply
 ```
 
-## 3. Usage
+## 4. Usage
 
-#### 3.1 Upload video to S3
+#### 4.1 Upload video to S3
 ```bash
 aws s3 cp <video path> s3://<bucket_video_name>/video/
 ```
-#### 3.2 Query by text
+#### 4.2 Query by text
 1. Sign up with temporary password
 ```bash
 aws cognito-idp admin-create-user \
@@ -162,7 +162,7 @@ curl --location --request POST 'https://<api gateway id>.execute-api.ap-southeas
 ```
 - `api gateway id` can be found in the terraform output after running `terraform apply`
 
-4. TODO
+## 5. TODO
 - [ ] Develop UI for the system
 - [ ] Hybrid search (text + image)
 - [ ] Improve the performance of the system
